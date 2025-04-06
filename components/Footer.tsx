@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
 import { FaGithub, FaLinkedin, FaTwitter, FaHeart } from 'react-icons/fa';
@@ -19,86 +21,94 @@ export default function Footer() {
 
   return (
     <footer className="bg-neutral-950 text-white border-t border-white/10">
-      <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-4 gap-10">
-        {/* Brand Section */}
-        <div className="space-y-4">
-          <h3 className="text-xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
-            MonPortfolio
-          </h3>
-          <p className="text-gray-400 text-sm leading-relaxed">
-            Développé avec <FaHeart className="inline text-pink-500" /> en Next.js, 
-            Tailwind & TypeScript. Conçu pour la performance et lélégance.
-          </p>
-        </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+        {/* Contenu principal */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+          {/* Brand Section - Centré sur mobile */}
+          <div className="md:col-span-3 text-center md:text-left">
+            <div className="flex flex-col items-center md:items-start space-y-3">
+              <h3 className="text-xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+                MonPortfolio
+              </h3>
+              <p className="text-gray-400 text-sm max-w-xs">
+                Développé avec <FaHeart className="inline text-pink-500" /> en Next.js, 
+                Tailwind & TypeScript
+              </p>
+            </div>
+          </div>
 
-        {/* Navigation */}
-        <div>
-          <h4 className="font-semibold text-lg mb-4 text-gray-200">Navigation</h4>
-          <ul className="space-y-3">
-            {navLinks.map((link) => (
-              <li key={link.name}>
-                <Link 
-                  href={link.path}
-                  className="text-gray-400 hover:text-pink-500 transition-colors duration-300 flex items-center group"
+          {/* Navigation - Centré sur mobile */}
+          <div className="md:col-span-2 flex justify-center md:justify-start">
+            <div>
+              <h4 className="font-semibold text-lg mb-4 text-gray-200 text-center md:text-left">Navigation</h4>
+              <ul className="space-y-2">
+                {navLinks.map((link) => (
+                  <li key={link.name} className="text-center md:text-left">
+                    <Link 
+                      href={link.path}
+                      className="text-gray-400 hover:text-pink-500 text-sm"
+                    >
+                      {link.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Social Links - Centré sur mobile */}
+          <div className="md:col-span-3 flex justify-center md:justify-start">
+            <div>
+              <h4 className="font-semibold text-lg mb-4 text-gray-200 text-center md:text-left">Réseaux</h4>
+              <ul className="space-y-2">
+                {socialLinks.map((social) => (
+                  <li key={social.name} className="text-center md:text-left">
+                    <a
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-400 hover:text-pink-500 text-sm flex items-center justify-center md:justify-start gap-2"
+                      aria-label={social.name}
+                    >
+                      {social.icon}
+                      {social.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Newsletter - Centré sur mobile */}
+          <div className="md:col-span-4">
+            <div className="max-w-xs mx-auto md:mx-0">
+              <h4 className="font-semibold text-lg mb-4 text-gray-200 text-center md:text-left">Newsletter</h4>
+              <p className="text-gray-400 text-sm mb-3 text-center md:text-left">
+                Abonnez-vous pour mes actualités
+              </p>
+              <form className="flex flex-col space-y-3">
+                <input
+                  type="email"
+                  placeholder="Votre email"
+                  className="bg-neutral-900 border border-white/10 rounded px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
+                  required
+                />
+                <button
+                  type="submit"
+                  className="bg-gradient-to-r from-pink-500 to-purple-600 text-white py-2 px-4 rounded text-sm font-medium"
                 >
-                  <span className="w-1 h-1 bg-pink-500 rounded-full mr-2 opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                  {link.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
+                  S&apos;abonner
+                </button>
+              </form>
+            </div>
+          </div>
         </div>
 
-        {/* Social Links */}
-        <div>
-          <h4 className="font-semibold text-lg mb-4 text-gray-200">Réseaux</h4>
-          <ul className="space-y-3">
-            {socialLinks.map((social) => (
-              <li key={social.name}>
-                <a
-                  href={social.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-pink-500 transition-colors duration-300 flex items-center group"
-                  aria-label={social.name}
-                >
-                  <span className="mr-2">{social.icon}</span>
-                  {social.name}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Newsletter */}
-        <div>
-          <h4 className="font-semibold text-lg mb-4 text-gray-200">Newsletter</h4>
-          <p className="text-gray-400 text-sm mb-3">
-            Abonnez-vous pour recevoir mes dernières actualités.
-          </p>
-          <form className="flex flex-col space-y-3">
-            <input
-              type="email"
-              placeholder="Votre email"
-              className="bg-neutral-900 border border-white/10 rounded px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
-              required
-            />
-            <button
-              type="submit"
-              className="bg-gradient-to-r from-pink-500 to-purple-600 text-white py-2 px-4 rounded text-sm font-medium hover:opacity-90 transition-opacity"
-            >
-              Sabonner
-            </button>
-          </form>
-        </div>
-      </div>
-
-      {/* Copyright */}
-      <div className="border-t border-white/10 py-6">
-        <div className="max-w-7xl mx-auto px-6 text-center text-xs text-gray-500">
-          <p>
+        {/* Copyright - Toujours centré */}
+        <div className="border-t border-white/10 mt-8 sm:mt-12 pt-6 text-center">
+          <p className="text-xs text-gray-500">
             © {currentYear} MonPortfolio. Tous droits réservés. | 
-            <Link href="/mentions-legales" className="hover:text-pink-500 transition-colors ml-2">
+            <Link href="/mentions-legales" className="hover:text-pink-500 ml-2">
               Mentions légales
             </Link>
           </p>
