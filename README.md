@@ -6,6 +6,17 @@ First, run the development server:
 
 ```bash
 npm run dev
+```
+
+This command starts the development server for your Next.js project. It allows you to preview your application locally at [http://localhost:3000](http://localhost:3000). Make sure you have all dependencies installed by running:
+
+```bash
+npm install
+```
+
+Before running the development server, ensure that your environment variables are properly configured if your project relies on them. You can define them in a `.env.local` file at the root of your project.
+
+Once the server is running, you can make changes to your code, and the application will automatically reload to reflect those changes.
 # or
 yarn dev
 # or
