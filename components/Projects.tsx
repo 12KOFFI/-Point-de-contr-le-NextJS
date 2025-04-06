@@ -7,7 +7,7 @@ const projects = [
   {
     title: 'Dashboard Admin',
     description: 'Interface admin complète avec React, Zustand et Chart.js avec dark mode.',
-    image: '/images/pot.webp',
+    image: '/images/im1.webp',
     techs: ['nextjs', 'tail', 'ts'],
     link: '#',
     github: '#',
