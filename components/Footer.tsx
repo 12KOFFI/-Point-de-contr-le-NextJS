@@ -67,7 +67,7 @@ export default function Footer() {
                       href={social.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-gray-400 hover:text-pink-500 text-sm flex items-center justify-center md:justify-start gap-2"
+                      className="text-gray-400 hover:text-blue-500 text-sm flex items-center justify-center md:justify-start gap-2"
                       aria-label={social.name}
                     >
                       {social.icon}
@@ -95,7 +95,7 @@ export default function Footer() {
                 />
                 <button
                   type="submit"
-                  className="bg-gradient-to-r from-pink-500 to-purple-600 text-white py-2 px-4 rounded text-sm font-medium"
+                  className="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 px-4 rounded text-sm font-medium"
                 >
                   S&apos;abonner
                 </button>

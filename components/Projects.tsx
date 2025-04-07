@@ -43,7 +43,7 @@ export default function Projects() {
     >
       {/* Effets de fond */}
       <div className="absolute inset-0 overflow-hidden opacity-10 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-pink-500 rounded-full blur-3xl mix-blend-overlay"></div>
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500 rounded-full blur-3xl mix-blend-overlay"></div>
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500 rounded-full blur-3xl mix-blend-overlay"></div>
       </div>
 
@@ -55,7 +55,7 @@ export default function Projects() {
           viewport={{ once: true, margin: '-100px' }}
           className="text-4xl md:text-6xl font-bold text-center mb-20 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent"
         >
-          Mes <span className="text-pink-500">projets</span>
+          Mes <span className="text-blue-500">projets</span>
         </motion.h2>
 
         <motion.div
@@ -89,7 +89,7 @@ export default function Projects() {
                 {/* Contenu */}
                 <div className="p-6 flex flex-col h-[220px]">
                   <div className="flex-1 text-center">
-                    <h3 className="text-xl font-bold mb-2 group-hover:text-pink-500 transition-colors">
+                    <h3 className="text-xl font-bold mb-2 group-hover:text-blue-500 transition-colors">
                       {project.title}
                     </h3>
                     <p className="text-gray-400 text-sm leading-relaxed">{project.description}</p>
@@ -116,7 +116,7 @@ export default function Projects() {
                       href={project.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 max-w-[200px] text-center bg-pink-600 hover:bg-pink-500 transition px-4 py-2 rounded-lg text-white text-sm font-medium"
+                      className="flex-1 max-w-[200px] text-center bg-blue-600 hover:bg-blue-500 transition px-4 py-2 rounded-lg text-white text-sm font-medium"
                     >
                       Voir le projet
                     </a>

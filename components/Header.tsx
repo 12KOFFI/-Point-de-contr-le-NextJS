@@ -30,8 +30,8 @@ export default function Header() {
               <Link
                 href={link.path}
                 className={clsx(
-                  'transition-colors hover:text-pink-500 px-2 py-1',
-                  pathname === link.path ? 'text-pink-500' : 'text-white'
+                  'transition-colors hover:text-blue-500 px-2 py-1',
+                  pathname === link.path ? 'text-blue-500' : 'text-white'
                 )}
               >
                 {link.name}
@@ -58,9 +58,9 @@ export default function Header() {
                   <Link
                     href={link.path}
                     className={clsx(
-                      'block transition-colors hover:text-pink-500 px-4 py-3 rounded-lg',
+                      'block transition-colors hover:text-blue-600 px-4 py-3 rounded-lg',
                       pathname === link.path 
-                        ? 'text-pink-500 bg-white/10' 
+                        ? 'text-blue-500 bg-white/10' 
                         : 'text-white'
                     )}
                     onClick={() => setMobileMenuOpen(false)}

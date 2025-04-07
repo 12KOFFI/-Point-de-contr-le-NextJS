@@ -17,7 +17,7 @@ export default function Contact() {
 
         <a
           href="mailto:isaacndri5@gmail.com"
-          className="inline-block px-6 py-3 sm:px-8 sm:py-4 bg-pink-600 hover:bg-pink-700 rounded-full text-white text-base sm:text-lg font-semibold"
+          className="inline-block px-6 py-3 sm:px-8 sm:py-4 bg-blue-600 hover:bg-blue-700 rounded-full text-white text-base sm:text-lg font-semibold"
           aria-label="Envoyer un email"
         >
           Parlons-en
