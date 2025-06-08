@@ -7,7 +7,6 @@ const skills = [
   {
     title: 'Développeur Frontend',
     icons: [
-      { name: 'TypeScript', file: 'ts' },
       { name: 'React', file: 'react' },
       { name: 'Next.js', file: 'nextjs' },
       { name: 'Tailwind', file: 'tail' },
@@ -27,7 +26,6 @@ const skills = [
     title: 'Designer – UI/UX',
     icons: [
       { name: 'Photoshop', file: 'ps' },
-      { name: 'Illustrator', file: 'ai' },
       { name: 'Figma', file: 'figma' },
     ],
     image: '/images/stack/exp3.svg',

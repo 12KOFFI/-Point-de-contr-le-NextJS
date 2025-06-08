@@ -2,8 +2,25 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 export default function Hero() {
+  const fullText =
+    'Developpeur Full Stack spécialisé en React et Next.js, Je crée des applications web performantes et modernes.';
+  const [typedText, setTypedText] = useState('');
+  const typingSpeed = 40;
+
+  useEffect(() => {
+    let index = 0;
+    const interval = setInterval(() => {
+      setTypedText((prev) => prev + fullText.charAt(index));
+      index++;
+      if (index >= fullText.length) clearInterval(interval);
+    }, typingSpeed);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <section className="min-h-screen flex items-center bg-gray-900 px-4 sm:px-6 py-16 md:py-20">
       <div className="max-w-7xl mx-auto w-full px-4 sm:px-6">
@@ -11,12 +28,12 @@ export default function Hero() {
           {/* Texte principal */}
           <div className="text-center lg:text-left flex-1">
             <h1 className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl font-bold mb-4 sm:mb-6 leading-tight text-white">
-              Salut, moi c&apos;est <span className="text-">Isaac Koffi</span>
+              Salut, moi c&apos;est <span className="text-blue-500">Isaac Koffi</span>
             </h1>
 
-            <p className="text-gray-300 text-base sm:text-lg md:text-xl mb-6 sm:mb-8 max-w-2xl mx-auto lg:mx-0">
-              Développeur Full Stack spécialisé en Next.js, React et TypeScript. 
-              Je crée des applications web performantes et modernes.
+            <p className="text-gray-300 text-base sm:text-lg md:text-xl mb-6 sm:mb-8 max-w-2xl mx-auto lg:mx-0 min-h-[100px]">
+              {typedText}
+              <span className="animate-pulse">|</span>
             </p>
 
             <div className="flex flex-col xs:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
@@ -37,7 +54,7 @@ export default function Hero() {
 
             {/* Stack technique */}
             <div className="mt-8 sm:mt-10 md:mt-12 flex flex-wrap justify-center lg:justify-start gap-2 sm:gap-3">
-              {['nextjs', 'react', 'ts', 'tail', 'nodejs'].map((tech) => (
+              {['nextjs', 'react', 'tail', 'nodejs'].map((tech) => (
                 <div key={tech} className="bg-white/10 p-1.5 sm:p-2 rounded-md sm:rounded-lg">
                   <Image
                     src={`/images/stack/${tech}.svg`}

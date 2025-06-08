@@ -43,7 +43,7 @@ export default function DeveloperInfo() {
         >
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-6 md:mb-8 
           bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent text-center lg:text-left">
-            Développeur Fullstack JavaScript & TypeScript
+            Développeur Fullstack JavaScript
           </h2>
           
           <div className="space-y-4 sm:space-y-5 md:space-y-6">

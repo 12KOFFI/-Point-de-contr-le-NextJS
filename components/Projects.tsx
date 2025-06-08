@@ -1,24 +1,49 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import Image from 'next/image';
+import {
+  ShoppingCart,
+  FileText,
+  CloudSun,
+  CheckSquare,
+} from 'lucide-react';
 
 const projects = [
   {
-    title: 'Dashboard Admin',
-    description: 'Interface admin complète avec React, Zustand et Chart.js avec dark mode.',
-    image: '/images/im1.webp',
-    techs: ['nextjs', 'tail', 'ts'],
-    link: '#',
-    github: '#',
+    title: 'E-commerce Moderne',
+    description:
+      'Plateforme e-commerce avec MERN stack, Tailwind CSS, authentification et dashboard admin.',
+    icon: ShoppingCart,
+    techs: ['react', 'tailwind', 'nodejs', 'express', 'mongodb'],
+    link: 'https://ecommerce-finaly.vercel.app/',
+    github: 'https://github.com/12KOFFI/Ecommerce-finaly',
   },
   {
-    title: 'Blog Headless',
-    description: 'Blog performant connecté à Strapi CMS, déployé sur Vercel avec ISR.',
-    image: '/images/colinka.webp',
-    techs: ['nextjs', 'tail', 'ts'],
-    link: '#',
-    github: '#',
+    title: 'Gestion État Civil',
+    description:
+      'Projet collaboratif pour gérer les actes d’état civil en Côte d’Ivoire.',
+    icon: FileText,
+    techs: ['html', 'css', 'php', 'mysql'],
+    link: 'https://github.com/12KOFFI/etatcivil',
+    github: 'https://github.com/12KOFFI/etatcivil',
+  },
+  {
+    title: 'Application Météo',
+    description:
+      'Application météo simple avec géolocalisation, API OpenWeatherMap et design responsive.',
+    icon: CloudSun,
+    techs: ['html', 'css', 'js'],
+    link: 'https://app-meteo-h4877anib-12koffis-projects.vercel.app/',
+    github: 'https://github.com/12KOFFI/APP---METEO',
+  },
+  {
+    title: 'Gestionnaire de Tâches',
+    description:
+      'Application intuitive pour créer, modifier et suivre ses tâches quotidiennes.',
+    icon: CheckSquare,
+    techs: ['nextjs', 'tailwind', 'ts', 'mysql' ,'prisma'],
+    link: 'https://github.com/12KOFFI/TODO-APP-FULL-STACK',
+    github: 'https://github.com/12KOFFI/TODO-APP-FULL-STACK',
   },
 ];
 
@@ -65,53 +90,46 @@ export default function Projects() {
           viewport={{ once: true, margin: '-100px' }}
           className="flex flex-col items-center"
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl mx-auto justify-center">
-            {projects.map((project, index) => (
-              <motion.div
-                key={index}
-                variants={item}
-                whileHover={{ y: -10 }}
-                transition={{ type: 'spring', stiffness: 300 }}
-                className="group relative bg-neutral-900 rounded-xl overflow-hidden border border-white/10 hover:border-pink-500/30 transition-all duration-500 shadow-xl hover:shadow-pink-500/20"
-              >
-                {/* Image du projet */}
-                <div className="h-60 overflow-hidden relative">
-                  <Image
-                    src={project.image}
-                    alt={project.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-6xl mx-auto justify-center">
+            {projects.map((project, index) => {
+              const Icon = project.icon;
+              return (
+                <motion.div
+                  key={index}
+                  variants={item}
+                  whileHover={{ y: -10 }}
+                  transition={{ type: 'spring', stiffness: 300 }}
+                  className="group relative bg-neutral-900 rounded-xl overflow-hidden border border-white/10 hover:border-pink-500/30 transition-all duration-500 shadow-xl hover:shadow-pink-500/20 p-6 flex flex-col justify-between"
+                >
+                  {/* Icône en haut */}
+                  <div className="flex justify-center mb-4">
+                    <Icon className="w-14 h-14 text-blue-500 group-hover:scale-110 transition-transform duration-300" />
+                  </div>
 
-                {/* Contenu */}
-                <div className="p-6 flex flex-col h-[220px]">
-                  <div className="flex-1 text-center">
+                  {/* Contenu texte */}
+                  <div className="text-center flex-1">
                     <h3 className="text-xl font-bold mb-2 group-hover:text-blue-500 transition-colors">
                       {project.title}
                     </h3>
-                    <p className="text-gray-400 text-sm leading-relaxed">{project.description}</p>
+                    <p className="text-gray-400 text-sm leading-relaxed">
+                      {project.description}
+                    </p>
                   </div>
 
-                  {/* Logos stack tech */}
+                  {/* Stack technologique */}
                   <div className="flex gap-3 mt-4 mb-4 flex-wrap justify-center">
                     {project.techs.map((tech, i) => (
-                      <div key={i} className="tooltip" data-tip={tech}>
-                        <Image
-                          src={`/images/stack/${tech}.svg`}
-                          alt={tech}
-                          width={24}
-                          height={24}
-                          className="grayscale hover:grayscale-0 transition duration-300 hover:scale-110"
-                        />
-                      </div>
+                      <span
+                        key={i}
+                        className="px-2 py-1 bg-neutral-800 text-xs rounded-lg text-white"
+                      >
+                        {tech}
+                      </span>
                     ))}
                   </div>
 
                   {/* Boutons */}
-                  <div className="flex gap-3 mt-auto justify-center">
+                  <div className="flex gap-3 justify-center mt-auto">
                     <a
                       href={project.link}
                       target="_blank"
@@ -143,9 +161,9 @@ export default function Projects() {
                       </svg>
                     </a>
                   </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              );
+            })}
           </div>
         </motion.div>
       </div>
