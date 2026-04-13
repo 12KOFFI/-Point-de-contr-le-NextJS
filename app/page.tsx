@@ -1,14 +1,15 @@
 // app/page.tsx
 
-
+import dynamic from "next/dynamic";
 import Hero from "@/components/Hero";
-import Presentation from "@/components/Presentation";
-import DeveloperInfo from "@/components/DeveloperInfo";
-import Questions from "@/components/Questions";
+
+const Presentation = dynamic(() => import("@/components/Presentation"));
+const DeveloperInfo = dynamic(() => import("@/components/DeveloperInfo"));
+const Questions = dynamic(() => import("@/components/Questions"));
 
 export const metadata = {
-  title: "Portfolio-Acceuil",
-  description: "Page à propos de mon portfolio.",
+  title: "Isaac Koffi – Accueil",
+  description: "Portfolio de Isaac Koffi, Développeur Web Full-Stack.",
 };
 
 export default function Home() {
@@ -18,8 +19,6 @@ export default function Home() {
       <Presentation />
       <DeveloperInfo />
       <Questions />
-      
-
     </main>
   );
 }

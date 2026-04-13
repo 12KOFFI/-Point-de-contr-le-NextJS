@@ -1,15 +1,16 @@
-import './globals.css';
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import "./globals.css";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import Providers from "@/components/Providers";
 
-
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Mon Portfolio',
-  description: 'Portfolio développé avec Next.js, Tailwind CSS, TypeScript et React',
+  title: "Isaac Koffi – Portfolio",
+  description:
+    "Portfolio de Isaac Koffi, Développeur Web Full-Stack – PHP/Symfony, React.js, Next.js",
 };
 
 export default function RootLayout({
@@ -18,11 +19,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr">
-      <body className={`${inter.className} bg-neutral-950 text-white`}>
-        <Header /> {/* Navbar avec les liens de navigation */}
-        <main className="pt-20">{children}</main> {/* Marge pour éviter de cacher le contenu sous la navbar fixe */}
-        <Footer /> {/* Bas de page avec infos et liens */}
+    <html lang="fr" className="dark" suppressHydrationWarning>
+      <body
+        className={`${inter.className} bg-gray-50 dark:bg-neutral-950 text-gray-900 dark:text-white transition-colors duration-300`}
+      >
+        <Providers>
+          <Header />
+          <main className="pt-20">{children}</main>
+          <Footer />
+        </Providers>
       </body>
     </html>
   );

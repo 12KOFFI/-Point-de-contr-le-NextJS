@@ -1,96 +1,81 @@
-'use client'
+"use client";
 
-import Image from 'next/image'
-import { motion } from 'framer-motion'
+import { LazyMotion, domAnimation, m } from "framer-motion";
+import { useLanguage } from "@/context/LanguageContext";
+import { translations } from "@/lib/translations";
 
-const skills = [
+const skillBlocks = [
   {
-    title: 'Développeur Frontend',
-    icons: [
-      { name: 'React', file: 'react' },
-      { name: 'Next.js', file: 'nextjs' },
-      { name: 'Tailwind', file: 'tail' },
-    ],
-    image: '/images/stack/exp1.svg',
+    key: "frontend" as const,
+    techs: ["React.js", "Next.js", "Tailwind CSS", "Bootstrap 5"],
+    color: "from-blue-500 to-cyan-400",
+    borderColor: "border-blue-500/30 hover:border-blue-500/60",
+    shadowColor: "hover:shadow-blue-500/20",
   },
   {
-    title: 'Développeur Backend',
-    icons: [
-      { name: 'Node.js', file: 'nodejs' },
-      { name: 'MySQL', file: 'mysql' },
-      { name: 'MongoDB', file: 'mongodb' },
-    ],
-    image: '/images/stack/exp4.svg',
+    key: "backend" as const,
+    techs: ["PHP / Symfony", "Node.js / Express"],
+    color: "from-purple-500 to-pink-400",
+    borderColor: "border-purple-500/30 hover:border-purple-500/60",
+    shadowColor: "hover:shadow-purple-500/20",
   },
   {
-    title: 'Designer – UI/UX',
-    icons: [
-      { name: 'Photoshop', file: 'ps' },
-      { name: 'Figma', file: 'figma' },
-    ],
-    image: '/images/stack/exp3.svg',
+    key: "database" as const,
+    techs: ["MySQL", "MongoDB", "Git", "Postman", "WampServer"],
+    color: "from-green-500 to-emerald-400",
+    borderColor: "border-green-500/30 hover:border-green-500/60",
+    shadowColor: "hover:shadow-green-500/20",
   },
-]
+];
 
 export default function Presentation() {
-  return (
-    <section className="bg-black text-white px-4 sm:px-6 lg:px-8 py-16 md:py-24 relative">
-      <div className="max-w-7xl mx-auto">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-purple-500 mb-12 md:mb-16 text-center">
-          Présentation
-        </h2>
+  const { lang } = useLanguage();
+  const t = translations[lang].presentation;
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
-          {skills.map((block, i) => (
-            <div
-              key={i}
-              className="bg-[#111] border border-purple-900/50 hover:border-purple-900 rounded-xl md:rounded-2xl p-4 sm:p-6 overflow-hidden flex flex-col gap-4 sm:gap-6 h-full group shadow-lg hover:shadow-purple-500/20 transition-all duration-300"
-            >
-              {/* Contenu */}
-              <div className="relative z-10">
-                <h3 className="text-lg sm:text-xl font-semibold text-white text-center mb-4 sm:mb-6">
-                  {block.title}
+  return (
+    <section className="bg-gray-50 dark:bg-black text-gray-900 dark:text-white px-4 sm:px-6 lg:px-8 py-16 md:py-24 transition-colors duration-300">
+      <div className="max-w-7xl mx-auto">
+        <LazyMotion features={domAnimation}>
+          <m.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-500 mb-12 md:mb-16 text-center"
+          >
+            {t.title}
+          </m.h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
+            {skillBlocks.map((block, i) => (
+              <m.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                viewport={{ once: true }}
+                className={`bg-white dark:bg-[#111] border ${block.borderColor} rounded-xl md:rounded-2xl p-6 sm:p-8 flex flex-col gap-4 sm:gap-6 h-full group shadow-lg ${block.shadowColor} transition-all duration-300`}
+              >
+                <h3
+                  className={`text-lg sm:text-xl font-bold text-center bg-gradient-to-r ${block.color} bg-clip-text text-transparent`}
+                >
+                  {t[block.key]}
                 </h3>
 
-                <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
-                  {/* Illustration */}
-                  <div className="flex-shrink-0">
-                    <Image
-                      src={block.image}
-                      alt="Illustration"
-                      width={80}
-                      height={80}
-                      className="opacity-90 hover:opacity-100 transition duration-300 w-16 h-16 sm:w-20 sm:h-20"
-                    />
-                  </div>
-
-                  {/* Icônes défilantes */}
-                  <div className="relative w-full overflow-hidden">
-                    <motion.div
-                      className="flex gap-6 sm:gap-8 md:gap-10"
-                      animate={{ x: ['100%', '-100%'] }}
-                      transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {block.techs.map((tech, j) => (
+                    <span
+                      key={j}
+                      className="px-3 py-1.5 bg-gray-100 dark:bg-white/10 text-gray-800 dark:text-white text-sm rounded-lg font-medium transition-colors hover:bg-gray-200 dark:hover:bg-white/20"
                     >
-                      {[...block.icons, ...block.icons].map((icon, index) => (
-                        <div key={index} className="flex flex-col items-center min-w-[50px] sm:min-w-[60px]">
-                          <Image
-                            src={`/images/stack/${icon.file}.svg`}
-                            alt={icon.name}
-                            width={32}
-                            height={32}
-                            className="w-8 h-8 sm:w-10 sm:h-10 mb-1 transition-transform duration-300 hover:scale-110"
-                          />
-                          <span className="text-xs text-white/80">{icon.name}</span>
-                        </div>
-                      ))}
-                    </motion.div>
-                  </div>
+                      {tech}
+                    </span>
+                  ))}
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
+              </m.div>
+            ))}
+          </div>
+        </LazyMotion>
       </div>
     </section>
-  )
+  );
 }
