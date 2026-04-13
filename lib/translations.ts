@@ -61,6 +61,11 @@ export const translations = {
         description:
           "Application intuitive pour créer, modifier et suivre ses tâches quotidiennes.",
       },
+      multiNettoyage: {
+        title: "Gestion de Devis – Multi-Nettoyage 94",
+        description:
+          "Application web complète de gestion de devis pour immeubles, maisons et bureaux. Génération automatique de PDF via DomPDF, envoi par e-mail SMTP, interface d'administration. Déployé sur o2switch.",
+      },
     },
     experiences: {
       title: "Mes",
@@ -99,22 +104,22 @@ export const translations = {
       education: [
         {
           title: "CQP – Développeur Web",
-          school: "E2C",
+          school: "E2C-TIC",
           period: "2024 – 2025",
         },
         {
-          title: "Certification Full-Stack JavaScript",
+          title: "Certification Développeur Full-Stack JavaScript",
           school: "GoMyCode",
           period: "2024 – 2025",
         },
         {
-          title: "Licence 3 – Dév. Applications",
-          school: "Univ. Virtuelle de Côte d'Ivoire",
+          title: "Licence 3 – Développement Applications",
+          school: "Université Virtuelle de Côte d'Ivoire",
           period: "2023 – 2024",
         },
         {
-          title: "BTS Informatique – Option IDA",
-          school: "École Sup. Saint Chalmel",
+          title: "BTS Informatique (Option IDA)",
+          school: "École Supérieure Saint Chalmel",
           period: "2020 – 2022",
         },
       ],
@@ -219,6 +224,11 @@ export const translations = {
         description:
           "Intuitive application to create, edit and track daily tasks.",
       },
+      multiNettoyage: {
+        title: "Quote Management – Multi-Nettoyage 94",
+        description:
+          "Full quote management web app for buildings, houses and offices. Automatic PDF generation via DomPDF, email sending via SMTP, admin dashboard. Deployed on o2switch.",
+      },
     },
     experiences: {
       title: "My",
@@ -255,20 +265,24 @@ export const translations = {
         ],
       },
       education: [
-        { title: "CQP – Web Developer", school: "E2C", period: "2024 – 2025" },
         {
-          title: "Full-Stack JavaScript Certification",
+          title: "CQP – Web Developer",
+          school: "E2C-TIC",
+          period: "2024 – 2025",
+        },
+        {
+          title: "Full-Stack JavaScript Developer Certification",
           school: "GoMyCode",
           period: "2024 – 2025",
         },
         {
-          title: "Bachelor's – App Development",
+          title: "Bachelor's Degree – Application Development",
           school: "Virtual University of Ivory Coast",
           period: "2023 – 2024",
         },
         {
-          title: "BTS Computer Science – IDA",
-          school: "École Sup. Saint Chalmel",
+          title: "BTS Computer Science (IDA Option)",
+          school: "École Supérieure Saint Chalmel",
           period: "2020 – 2022",
         },
       ],
