@@ -76,7 +76,7 @@ export default function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
     messages: [
       {
         id: "greeting",
-        role: "assistant" as const,
+        role: "assistant" as "assistant" | "user" | "system",
         parts: [{ type: "text" as const, text: ui.greeting }],
       },
     ],
