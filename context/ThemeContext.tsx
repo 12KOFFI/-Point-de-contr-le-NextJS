@@ -17,33 +17,39 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+// Only an explicit choice (toggle click) is stored. The old "theme" key was
+// written on every visit, so it can't tell a real choice from the default.
+const STORAGE_KEY = "theme-choice";
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
+  // Dark by default, whatever the OS setting
   const [theme, setTheme] = useState<Theme>("dark");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    const stored = localStorage.getItem("theme") as Theme | null;
-    if (stored) {
-      setTheme(stored);
-    } else if (window.matchMedia("(prefers-color-scheme: light)").matches) {
-      setTheme("light");
+    try {
+      localStorage.removeItem("theme");
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored === "light" || stored === "dark") setTheme(stored);
+    } catch {
+      // storage unavailable (private mode): keep the default
     }
   }, []);
 
   useEffect(() => {
     if (!mounted) return;
-    const root = document.documentElement;
-    if (theme === "dark") {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
-    localStorage.setItem("theme", theme);
+    document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme, mounted]);
 
   const toggleTheme = () => {
-    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+    setTheme((prev) => {
+      const next = prev === "dark" ? "light" : "dark";
+      try {
+        localStorage.setItem(STORAGE_KEY, next);
+      } catch {}
+      return next;
+    });
   };
 
   return (

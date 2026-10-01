@@ -21,7 +21,7 @@ export default function Footer() {
     },
     {
       name: "LinkedIn",
-      url: "https://urlz.fr/urkU",
+      url: "https://www.linkedin.com/in/isaac-n-dri-koffi-7b74b4247/",
       icon: <FaLinkedin className="w-4 h-4" />,
     },
   ];
@@ -37,7 +37,7 @@ export default function Footer() {
   return (
     <footer className="border-t border-gray-200 bg-[linear-gradient(180deg,_#f8fafc_0%,_#eef4ff_100%)] text-gray-900 transition-colors duration-300 dark:border-white/10 dark:bg-[linear-gradient(180deg,_#020617_0%,_#0b1120_100%)] dark:text-white">
       <div className="max-w-7xl mx-auto px-4 py-10 sm:px-6 sm:py-14">
-        <div className="rounded-3xl border border-gray-200/80 bg-white/80 p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)] backdrop-blur-md dark:border-white/10 dark:bg-white/5 dark:shadow-[0_20px_60px_rgba(0,0,0,0.25)] sm:p-8">
+        <div data-reveal="up" className="rounded-3xl border border-gray-200/80 bg-white/80 p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)] backdrop-blur-md dark:border-white/10 dark:bg-white/5 dark:shadow-[0_20px_60px_rgba(0,0,0,0.25)] sm:p-8">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.3fr_1fr_1fr]">
             <div className="text-center lg:text-left">
               <p className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-blue-700 dark:border-blue-400/20 dark:bg-blue-500/10 dark:text-blue-300">

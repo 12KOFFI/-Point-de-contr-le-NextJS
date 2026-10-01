@@ -10,14 +10,25 @@ html {
   scroll-behavior: smooth;
 }
 
-/* GPU acceleration for animated elements */
-.will-change-transform {
-  will-change: transform;
+/* Native controls and scrollbars follow the theme */
+:root {
+  color-scheme: light;
+}
+:root.dark {
+  color-scheme: dark;
 }
 
-/* Skill icon glow on hover */
-.skill-icon:hover {
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
+/* Browser surfaces themed from the palette */
+::selection {
+  background: rgb(37 99 235 / 0.18);
+  color: inherit;
+}
+.dark ::selection {
+  background: rgb(96 165 250 / 0.3);
+}
+input,
+textarea {
+  caret-color: #2563eb;
 }
 
 /* Scrollbar styling */
@@ -30,4 +41,424 @@ html {
 .scrollbar-thin::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.2);
   border-radius: 2px;
+}
+
+/* =====================================================================
+   Hero — entrance animations are pure CSS so they start with the SSR HTML,
+   before React hydrates (no flash, no waiting for the JS bundle).
+   ===================================================================== */
+@keyframes hero-fade-up {
+  from {
+    opacity: 0.35;
+    transform: translate3d(0, 16px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes hero-pop-in {
+  from {
+    opacity: 0.35;
+    transform: translate3d(0, 24px, 0) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.hero-reveal {
+  animation: hero-fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--d, 0ms);
+}
+
+.hero-visual {
+  animation: hero-pop-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.typed-caret {
+  animation: caret-blink 1s steps(1) infinite;
+}
+
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes scroll-dot {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.scroll-dot {
+  animation: scroll-dot 1.8s ease-in-out infinite;
+}
+
+/* ===== Robot ===== */
+@keyframes robot-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes robot-shadow {
+  0%,
+  100% {
+    transform: scaleX(1);
+    opacity: 0.35;
+  }
+  50% {
+    transform: scaleX(0.86);
+    opacity: 0.22;
+  }
+}
+
+@keyframes robot-blink {
+  0%,
+  92%,
+  100% {
+    transform: scaleY(1);
+  }
+  95% {
+    transform: scaleY(0.1);
+  }
+}
+
+@keyframes robot-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@keyframes robot-wave {
+  0%,
+  100% {
+    transform: rotate(-128deg);
+  }
+  50% {
+    transform: rotate(-156deg);
+  }
+}
+
+.robot-float {
+  animation: robot-float 4.5s ease-in-out infinite;
+}
+
+.robot-shadow {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: robot-shadow 4.5s ease-in-out infinite;
+}
+
+.robot-blink {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: robot-blink 4.8s ease-in-out infinite;
+}
+
+.robot-pulse {
+  animation: robot-pulse 2.4s ease-in-out infinite;
+}
+
+.robot-arm-r {
+  transform-box: fill-box;
+  transform-origin: 50% 8%;
+  transform: rotate(-12deg);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.robot.is-happy .robot-arm-r {
+  animation: robot-wave 0.6s ease-in-out infinite;
+}
+
+.robot .robot-eyes-happy {
+  opacity: 0;
+}
+.robot.is-happy .robot-eyes-happy {
+  opacity: 1;
+}
+.robot.is-happy .robot-eyes-round {
+  opacity: 0;
+}
+
+/* =====================================================================
+   Tech Stack — bubble cloud
+   Three layers per bubble so transforms never fight each other:
+   .tech-item (JS: magnetic cluster) > .tech-pop (CSS: entrance) > .tech-float (CSS: idle loop)
+   ===================================================================== */
+.tech-item {
+  --bubble-size: 84px;
+  transform: translate3d(0, 0, 0);
+  transition: opacity 0.3s ease;
+}
+
+.tech-item.size-xl {
+  --bubble-size: 132px;
+}
+.tech-item.size-lg {
+  --bubble-size: 104px;
+}
+.tech-item.size-md {
+  --bubble-size: 84px;
+}
+.tech-item.size-sm {
+  --bubble-size: 66px;
+}
+
+/* organic, non-grid vertical stagger */
+.tech-item:nth-child(3n) {
+  margin-top: 18px;
+}
+.tech-item:nth-child(4n) {
+  margin-top: -14px;
+}
+.tech-item:nth-child(5n) {
+  margin-top: 8px;
+}
+
+@media (max-width: 768px) {
+  .tech-item.size-xl {
+    --bubble-size: 92px;
+  }
+  .tech-item.size-lg {
+    --bubble-size: 76px;
+  }
+  .tech-item.size-md {
+    --bubble-size: 62px;
+  }
+  .tech-item.size-sm {
+    --bubble-size: 52px;
+  }
+  .tech-item:nth-child(3n),
+  .tech-item:nth-child(4n),
+  .tech-item:nth-child(5n) {
+    margin-top: 0;
+  }
+}
+
+.tech-bubble {
+  width: var(--bubble-size);
+  height: var(--bubble-size);
+}
+
+/* hidden only once JS has armed the entrance (cloud below the fold) */
+.tech-cloud[data-armed] .tech-pop {
+  opacity: 0;
+  transform: translate3d(0, 20px, 0) scale(0.85);
+}
+
+.tech-cloud[data-armed][data-visible] .tech-pop {
+  animation: tech-pop 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--i, 0) * 22ms);
+}
+
+@keyframes tech-pop {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.tech-float {
+  animation: tech-float 6s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * -0.7s);
+  animation-play-state: paused;
+}
+.tech-item:nth-child(2n) .tech-float {
+  animation-duration: 7.5s;
+}
+.tech-item:nth-child(3n) .tech-float {
+  animation-duration: 5.2s;
+}
+
+/* idle loop only runs while the section is on screen */
+.tech-cloud[data-inview] .tech-float {
+  animation-play-state: running;
+}
+
+@keyframes tech-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes tech-particle {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.25;
+  }
+  50% {
+    transform: translateY(-14px);
+    opacity: 0.8;
+  }
+}
+
+.tech-particle {
+  animation: tech-particle 4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-reveal,
+  .hero-visual {
+    animation: none;
+  }
+  .robot-float,
+  .robot-shadow,
+  .robot-pulse,
+  .tech-float,
+  .tech-particle,
+  .scroll-dot,
+  .robot.is-happy .robot-arm-r {
+    animation: none;
+  }
+}
+
+/* =====================================================================
+   Robot drag: lifted → smaller, fainter shadow; landing → small squash
+   ===================================================================== */
+.robot-drag.is-lifted .robot-shadow {
+  animation: none;
+  opacity: 0.12;
+  transform: scaleX(0.6);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+@keyframes robot-land {
+  0% {
+    transform: scale(1.06, 0.92);
+  }
+  45% {
+    transform: scale(0.98, 1.03);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+.robot-drag.is-dropped > svg {
+  transform-origin: 50% 95%;
+  animation: robot-land 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* =====================================================================
+   Scroll reveal system (see components/ScrollMotion.tsx)
+   Only `data-armed` elements (below the fold at load) are ever hidden.
+   ===================================================================== */
+:root {
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes reveal-mask {
+  from {
+    clip-path: inset(0 0 100% 0);
+    transform: translate3d(0, 45%, 0);
+  }
+  to {
+    clip-path: inset(-20% -5% -25% -5%);
+    transform: none;
+  }
+}
+
+@keyframes reveal-wipe {
+  from {
+    clip-path: inset(0 0 100% 0 round 1rem);
+  }
+  to {
+    clip-path: inset(0 0 0 0 round 1rem);
+  }
+}
+
+[data-reveal="up"][data-armed]:not([data-in]),
+[data-reveal="stagger"][data-armed]:not([data-in]) > * {
+  opacity: 0;
+  transform: translate3d(0, 16px, 0);
+}
+[data-reveal="up"][data-armed][data-in],
+[data-reveal="stagger"][data-armed][data-in] > * {
+  animation: reveal-up 0.5s var(--ease-out-expo) both;
+}
+[data-reveal="stagger"][data-armed][data-in] > * {
+  animation-delay: calc(var(--ri, 0) * 40ms);
+}
+
+[data-reveal="heading"][data-armed]:not([data-in]) {
+  clip-path: inset(0 0 100% 0);
+}
+[data-reveal="heading"][data-armed][data-in] {
+  animation: reveal-mask 0.6s var(--ease-out-expo) both;
+}
+
+[data-reveal="image"][data-armed]:not([data-in]) {
+  clip-path: inset(0 0 100% 0 round 1rem);
+}
+[data-reveal="image"][data-armed][data-in] {
+  animation: reveal-wipe 0.6s var(--ease-out-expo) both;
+}
+
+/* About: the paragraph crossing the middle of the screen is "lit" */
+.dev-focus[data-ready] .dev-text {
+  opacity: 0.55;
+  transition: opacity 0.5s ease;
+}
+.dev-focus[data-ready] .dev-text[data-active] {
+  opacity: 1;
+}
+
+/* Experience timeline: dots light up as the scroll-drawn line reaches them */
+.timeline-dot {
+  transition:
+    background-color 0.4s ease,
+    box-shadow 0.4s ease,
+    transform 0.4s var(--ease-out-expo);
+}
+.timeline-dot[data-lit] {
+  box-shadow: 0 0 0 6px rgb(59 130 246 / 0.18);
+  transform: scale(1.15);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dev-focus[data-ready] .dev-text {
+    opacity: 1;
+  }
+  .robot-drag.is-dropped > svg {
+    animation: none;
+  }
 }

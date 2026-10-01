@@ -1,12 +1,8 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { translations } from "@/lib/translations";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
 
 function StarSVG() {
   return (
@@ -68,88 +64,26 @@ const questionIcons = [StarSVG, RocketSVG, PaletteSVG];
 export default function Questions() {
   const { lang } = useLanguage();
   const t = translations[lang].questions;
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Title
-      gsap.fromTo(
-        ".q-title",
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.7,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 85%",
-            toggleActions: "play none none none",
-          },
-        },
-      );
-
-      // Subtitle
-      gsap.fromTo(
-        ".q-subtitle",
-        { opacity: 0, y: 20 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.6,
-          delay: 0.2,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 85%",
-            toggleActions: "play none none none",
-          },
-        },
-      );
-
-      // Cards (includes icons inside them — no separate icon animation)
-      gsap.fromTo(
-        ".q-card",
-        { opacity: 0, y: 40, scale: 0.9 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.6,
-          stagger: 0.15,
-          ease: "power3.out",
-          clearProps: "all",
-          scrollTrigger: {
-            trigger: ".q-grid",
-            start: "top 85%",
-            toggleActions: "play none none none",
-          },
-        },
-      );
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, [lang]);
-
   return (
     <section
-      ref={sectionRef}
       className="py-20 px-6 bg-gray-50 dark:bg-neutral-950 text-gray-900 dark:text-white transition-colors duration-300"
     >
       <div className="max-w-5xl mx-auto text-center mb-12">
-        <h2 className="q-title text-4xl font-bold mb-4">{t.title}</h2>
-        <p className="q-subtitle text-gray-500 dark:text-gray-400">
+        <h2 data-reveal="heading" className="text-4xl font-bold tracking-tight text-balance mb-4">
+          {t.title}
+        </h2>
+        <p data-reveal="up" className="text-gray-500 dark:text-gray-400">
           {t.subtitle}
         </p>
       </div>
 
-      <div className="q-grid grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+      <div data-reveal="stagger" className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
         {t.items.map((item, index) => {
           const IconComponent = questionIcons[index] || StarSVG;
           return (
             <div
               key={index}
-              className="q-card bg-white dark:bg-neutral-900 border border-gray-200 dark:border-white/5 rounded-2xl p-6 text-left shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
+              className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-white/5 rounded-2xl p-6 text-left shadow-md hover:shadow-xl hover:-translate-y-1 transition-[box-shadow,translate] duration-300 group"
             >
               <div className="mb-4 p-2 w-fit bg-gray-50 dark:bg-white/5 rounded-xl group-hover:scale-110 transition-transform duration-300">
                 <IconComponent />

@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "components/Hero.tsx"
+        ],
+        "createdAt": "2026-10-01T12:22:36.395Z",
+        "reason": "pre-existing brand: original Hero.tsx already rendered the name with from-blue-500 to-purple-500 gradient; kept for continuity"
+      }
+    ]
+  }
+}

@@ -23,7 +23,7 @@ const contactInfo = [
     key: 'linkedin',
     icon: FaLinkedin,
     value: 'LinkedIn',
-    href: 'https://urlz.fr/urkU',
+    href: 'https://www.linkedin.com/in/isaac-n-dri-koffi-7b74b4247/',
   },
   {
     key: 'github',
@@ -43,10 +43,13 @@ export default function Contact() {
       className="min-h-[60vh] flex flex-col justify-center items-center bg-white dark:bg-gray-900 px-4 py-20 transition-colors duration-300"
     >
       <div className="text-center max-w-2xl mb-12">
-        <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-gray-900 dark:text-white">
+        <h2 className="hero-reveal text-3xl sm:text-4xl font-bold tracking-tight text-balance mb-4 text-gray-900 dark:text-white">
           {t.title}
         </h2>
-        <p className="text-base sm:text-lg mb-8 text-gray-600 dark:text-gray-300">
+        <p
+          className="hero-reveal text-base sm:text-lg mb-8 text-gray-600 dark:text-gray-300"
+          style={{ "--d": "40ms" } as React.CSSProperties}
+        >
           {t.subtitle}
         </p>
       </div>
@@ -61,7 +64,8 @@ export default function Contact() {
               href={info.href}
               target={info.key === 'email' || info.key === 'phone' ? undefined : '_blank'}
               rel={info.key === 'email' || info.key === 'phone' ? undefined : 'noopener noreferrer'}
-              className="flex items-center gap-3 p-4 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl hover:border-blue-300 dark:hover:border-blue-500/30 transition-all group"
+              className="flex items-center gap-3 p-4 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl hover:border-blue-300 dark:hover:border-blue-500/30 transition-colors group hero-reveal"
+              style={{ "--d": `${80 + contactInfo.indexOf(info) * 40}ms` } as React.CSSProperties}
             >
               <div className="p-2 bg-blue-100 dark:bg-blue-500/20 rounded-lg">
                 <Icon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
@@ -81,7 +85,8 @@ export default function Contact() {
         {/* Location */}
         <a
           href="#"
-          className="flex items-center gap-3 p-4 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl sm:col-span-2"
+          className="hero-reveal flex items-center gap-3 p-4 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl sm:col-span-2"
+          style={{ "--d": `${80 + contactInfo.length * 40}ms` } as React.CSSProperties}
         >
           <div className="p-2 bg-blue-100 dark:bg-blue-500/20 rounded-lg">
             <FiMapPin className="w-5 h-5 text-blue-600 dark:text-blue-400" />

@@ -2,7 +2,7 @@ import Contact from "@/components/Contact";
 
 export const metadata = {
   title: "Isaac Koffi – Contact",
-  description: "Contactez Isaac Koffi, Développeur Web Full-Stack.",
+  description: "Contactez Isaac Koffi, Développeur Web Full-Stack Junior.",
 };
 
 export default function ContactPage() {

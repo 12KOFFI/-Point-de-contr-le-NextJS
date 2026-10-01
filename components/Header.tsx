@@ -84,8 +84,8 @@ export default function Header() {
         className={clsx(
           "mx-auto max-w-7xl rounded-[1.75rem] border transition-all duration-300",
           isScrolled
-            ? "border-white/50 bg-white/78 shadow-[0_18px_55px_rgba(15,23,42,0.12)] backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/72"
-            : "border-white/35 bg-white/62 shadow-[0_10px_35px_rgba(15,23,42,0.08)] backdrop-blur-lg dark:border-white/10 dark:bg-slate-950/55",
+            ? "border-white/50 bg-white/95 shadow-[0_18px_55px_rgba(15,23,42,0.12)] dark:border-white/10 dark:bg-slate-950/95"
+            : "border-white/35 bg-white/90 shadow-[0_10px_35px_rgba(15,23,42,0.08)] dark:border-white/10 dark:bg-slate-950/85",
         )}
       >
         <nav className="relative flex items-center justify-between px-4 py-3 sm:px-5 sm:py-4">
@@ -104,7 +104,7 @@ export default function Header() {
           </Link>
 
           <div className="hidden lg:flex lg:items-center lg:gap-3">
-            <ul className="flex items-center gap-1 rounded-full border border-slate-200/80 bg-white/72 px-2 py-2 shadow-sm backdrop-blur-md dark:border-white/10 dark:bg-white/5">
+            <ul className="flex items-center gap-1 rounded-full border border-slate-200/80 bg-white/72 px-2 py-2 shadow-sm  dark:border-white/10 dark:bg-white/5">
               {links.map((link) => (
                 <li key={link.path}>
                   <Link
@@ -122,7 +122,7 @@ export default function Header() {
               ))}
             </ul>
 
-            <div className="flex items-center gap-2 rounded-full border border-slate-200/80 bg-white/72 p-2 shadow-sm backdrop-blur-md dark:border-white/10 dark:bg-white/5">
+            <div className="flex items-center gap-2 rounded-full border border-slate-200/80 bg-white/72 p-2 shadow-sm  dark:border-white/10 dark:bg-white/5">
               <button
                 onClick={toggleLang}
                 className="flex items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100 dark:text-white dark:hover:bg-white/10"
@@ -147,7 +147,7 @@ export default function Header() {
           <div className="flex items-center gap-2 lg:hidden">
             <button
               onClick={toggleLang}
-              className="flex items-center gap-1 rounded-full border border-slate-200/80 bg-white/72 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm backdrop-blur-md transition-colors hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
+              className="flex items-center gap-1 rounded-full border border-slate-200/80 bg-white/72 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm  transition-colors hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
               aria-label={headerCopy.langLabel}
             >
               <FiGlobe size={15} />
@@ -158,14 +158,14 @@ export default function Header() {
 
             <button
               onClick={toggleTheme}
-              className="rounded-full border border-slate-200/80 bg-white/72 p-2.5 text-slate-700 shadow-sm backdrop-blur-md transition-colors hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
+              className="rounded-full border border-slate-200/80 bg-white/72 p-2.5 text-slate-700 shadow-sm  transition-colors hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
               aria-label={headerCopy.themeLabel}
             >
               {theme === "dark" ? <FiSun size={18} /> : <FiMoon size={18} />}
             </button>
 
             <button
-              className="rounded-full border border-slate-200/80 bg-white/72 p-2.5 text-slate-700 shadow-sm backdrop-blur-md transition-colors hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
+              className="rounded-full border border-slate-200/80 bg-white/72 p-2.5 text-slate-700 shadow-sm  transition-colors hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
               onClick={() => setMobileMenuOpen((prev) => !prev)}
               aria-label={headerCopy.menuLabel}
               aria-expanded={mobileMenuOpen}
@@ -176,7 +176,7 @@ export default function Header() {
 
           {mobileMenuOpen && (
             <div className="absolute left-0 right-0 top-[calc(100%+0.75rem)] lg:hidden">
-              <div className="overflow-hidden rounded-[1.75rem] border border-white/50 bg-white/90 p-4 shadow-[0_18px_55px_rgba(15,23,42,0.16)] backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/88">
+              <div className="overflow-hidden rounded-[1.75rem] border border-white/50 bg-white/[0.97] p-4 shadow-[0_18px_55px_rgba(15,23,42,0.16)] dark:border-white/10 dark:bg-slate-950/[0.97]">
                 <ul className="flex flex-col gap-2">
                   {links.map((link) => (
                     <li key={link.path}>

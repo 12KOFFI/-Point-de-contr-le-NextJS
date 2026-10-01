@@ -4,7 +4,7 @@ const Projects = dynamic(() => import("@/components/Projects"));
 
 export const metadata = {
   title: "Isaac Koffi – Projets",
-  description: "Projets réalisés par Isaac Koffi, Développeur Web Full-Stack.",
+  description: "Projets réalisés par Isaac Koffi, Développeur Web Full-Stack Junior.",
 };
 export default function AProposPage() {
   return (

@@ -9,16 +9,16 @@ const Questions = dynamic(() => import("@/components/Questions"));
 
 export const metadata = {
   title: "Isaac Koffi – Accueil",
-  description: "Portfolio de Isaac Koffi, Développeur Web Full-Stack.",
+  description: "Portfolio de Isaac Koffi, Développeur Web Full-Stack Junior.",
 };
 
 export default function Home() {
   return (
-    <main>
+    <>
       <Hero />
       <Presentation />
       <DeveloperInfo />
       <Questions />
-    </main>
+    </>
   );
 }

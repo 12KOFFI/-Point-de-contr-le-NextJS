@@ -5,13 +5,14 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Providers from "@/components/Providers";
 import ChatBotIcon from "@/components/ChatBotIcon";
+import ScrollMotion from "@/components/ScrollMotion";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Isaac Koffi – Portfolio",
   description:
-    "Portfolio de Isaac Koffi, Développeur Web Full-Stack – PHP/Symfony, React.js, Next.js",
+    "Portfolio d'Isaac N'Dri Koffi, Développeur Web Full-Stack Junior à Abidjan – PHP/Symfony, React.js, Node.js.",
 };
 
 export default function RootLayout({
@@ -21,6 +22,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr" className="dark" suppressHydrationWarning>
+      <head>
+        {/* Dark by default; apply a saved "light" choice before first paint (no flash) */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem("theme-choice")==="light")document.documentElement.classList.remove("dark")}catch(e){}`,
+          }}
+        />
+      </head>
       <body
         className={`${inter.className} bg-gray-50 dark:bg-neutral-950 text-gray-900 dark:text-white transition-colors duration-300`}
       >
@@ -29,6 +38,7 @@ export default function RootLayout({
           <main className="pt-20">{children}</main>
           <Footer />
           <ChatBotIcon />
+          <ScrollMotion />
         </Providers>
       </body>
     </html>

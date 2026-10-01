@@ -5,7 +5,7 @@ const DeveloperInfo = dynamic(() => import("@/components/DeveloperInfo"));
 
 export const metadata = {
   title: "Isaac Koffi – À propos",
-  description: "À propos de Isaac Koffi, Développeur Web Full-Stack.",
+  description: "À propos de Isaac Koffi, Développeur Web Full-Stack Junior.",
 };
 export default function AProposPage() {
   return (

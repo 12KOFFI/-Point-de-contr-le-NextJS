@@ -5,7 +5,7 @@ const Experience = dynamic(() => import("@/components/Experience"));
 export const metadata = {
   title: "Isaac Koffi – Expériences",
   description:
-    "Expériences professionnelles et formation de Isaac Koffi, Développeur Web Full-Stack.",
+    "Expériences professionnelles et formation de Isaac Koffi, Développeur Web Full-Stack Junior.",
 };
 
 export default function ExperiencesPage() {

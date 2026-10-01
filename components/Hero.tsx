@@ -1,243 +1,215 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
+import { FaGithub, FaLinkedin } from "react-icons/fa";
+import { FiArrowRight, FiDownload, FiMail } from "react-icons/fi";
 import { useLanguage } from "@/context/LanguageContext";
 import { translations } from "@/lib/translations";
-import gsap from "gsap";
+import Robot from "@/components/Robot";
+import ParticleNetwork from "@/components/ParticleNetwork";
 
-const floatingTechs = [
-  { name: "react", top: "5%", left: "10%", size: 40 },
-  { name: "nextjs", top: "15%", right: "5%", size: 36 },
-  { name: "nodejs", bottom: "15%", left: "5%", size: 38 },
-  { name: "tail", bottom: "10%", right: "10%", size: 34 },
-  { name: "ts", top: "50%", left: "0%", size: 32 },
-  { name: "symfony", top: "45%", right: "0%", size: 36 },
+const socials = [
+  { label: "GitHub", href: "https://github.com/12KOFFI", icon: FaGithub },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/isaac-n-dri-koffi-7b74b4247/", icon: FaLinkedin },
+  { label: "Email", href: "mailto:isaacndri5@gmail.com", icon: FiMail },
 ];
+
+/**
+ * Typewriter isolated in its own component: only this <span> re-renders
+ * on each character, not the whole Hero.
+ */
+function TypedRoles({ roles }: { roles: string[] }) {
+  const [text, setText] = useState("");
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setText(roles[0]);
+      return;
+    }
+
+    let roleIndex = 0;
+    let charIndex = 0;
+    let deleting = false;
+    let timeout: ReturnType<typeof setTimeout>;
+
+    const step = () => {
+      const word = roles[roleIndex];
+      charIndex += deleting ? -1 : 1;
+      setText(word.slice(0, charIndex));
+
+      let delay = deleting ? 35 : 75;
+      if (!deleting && charIndex === word.length) {
+        deleting = true;
+        delay = 1600;
+      } else if (deleting && charIndex === 0) {
+        deleting = false;
+        roleIndex = (roleIndex + 1) % roles.length;
+        delay = 300;
+      }
+      timeout = setTimeout(step, delay);
+    };
+
+    setText("");
+    timeout = setTimeout(step, 500);
+    return () => clearTimeout(timeout);
+  }, [roles]);
+
+  return (
+    <>
+      <span className="sr-only">{roles.join(", ")}</span>
+      <span aria-hidden="true" className="whitespace-nowrap">
+        <span className="text-blue-600 dark:text-blue-400">{text}</span>
+        <span className="typed-caret ml-0.5 font-light text-blue-500">|</span>
+      </span>
+    </>
+  );
+}
 
 export default function Hero() {
   const { lang } = useLanguage();
   const t = translations[lang].hero;
-  const [typedText, setTypedText] = useState("");
-  const typingSpeed = 40;
-
-  const heroRef = useRef<HTMLElement>(null);
-  const imageContainerRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
-  const floatingRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const visualRef = useRef<HTMLDivElement>(null);
+  const cueRef = useRef<HTMLAnchorElement>(null);
 
-  // Typing effect
+  // Scroll exit with depth: the text leaves faster than the robot, which sinks back a little
   useEffect(() => {
-    setTypedText("");
-    let index = 0;
-    const fullText = t.typedText;
-    const interval = setInterval(() => {
-      setTypedText((prev) => prev + fullText.charAt(index));
-      index++;
-      if (index >= fullText.length) clearInterval(interval);
-    }, typingSpeed);
-    return () => clearInterval(interval);
-  }, [t.typedText]);
-
-  // GSAP entrance animations
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Text entrance
-      gsap.from(textRef.current, {
-        opacity: 0,
-        x: -60,
-        duration: 1,
-        ease: "power3.out",
-      });
-
-      // Image entrance with 3D
-      gsap.from(imageContainerRef.current, {
-        opacity: 0,
-        scale: 0.8,
-        rotateY: 15,
-        duration: 1.2,
-        ease: "power3.out",
-        delay: 0.3,
-      });
-
-      // Floating tech icons - continuous animation
-      floatingRefs.current.forEach((el, i) => {
-        if (!el) return;
-        gsap.from(el, {
-          opacity: 0,
-          scale: 0,
-          duration: 0.6,
-          delay: 0.8 + i * 0.1,
-          ease: "back.out(1.7)",
-        });
-
-        // Continuous floating
-        gsap.to(el, {
-          y: "random(-12, 12)",
-          x: "random(-8, 8)",
-          rotation: "random(-8, 8)",
-          duration: "random(2.5, 4)",
-          ease: "sine.inOut",
-          repeat: -1,
-          yoyo: true,
-          delay: i * 0.3,
-        });
-      });
-    }, heroRef);
-
-    return () => ctx.revert();
-  }, [lang]);
-
-  // Mouse parallax for 3D effect
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!imageContainerRef.current) return;
-    const rect = imageContainerRef.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    const rotateY = ((e.clientX - centerX) / rect.width) * 20;
-    const rotateX = -((e.clientY - centerY) / rect.height) * 20;
-
-    gsap.to(imageContainerRef.current, {
-      rotateY,
-      rotateX,
-      duration: 0.5,
-      ease: "power2.out",
-      transformPerspective: 800,
-    });
-
-    // Parallax on floating techs
-    floatingRefs.current.forEach((el, i) => {
-      if (!el) return;
-      const depth = 0.02 + i * 0.008;
-      gsap.to(el, {
-        x: (e.clientX - centerX) * depth,
-        y: (e.clientY - centerY) * depth,
-        duration: 0.5,
-        ease: "power2.out",
-      });
-    });
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    if (!imageContainerRef.current) return;
-    gsap.to(imageContainerRef.current, {
-      rotateY: 0,
-      rotateX: 0,
-      duration: 0.8,
-      ease: "elastic.out(1, 0.5)",
-    });
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let raf = 0;
+    let lastP = -1;
+    const update = () => {
+      raf = 0;
+      const section = sectionRef.current;
+      if (!section) return;
+      const p = Math.min(1, Math.max(0, window.scrollY / (section.offsetHeight * 0.85)));
+      if (p === lastP) return;
+      lastP = p;
+      if (textRef.current) {
+        textRef.current.style.transform = `translate3d(0, ${(-p * 70).toFixed(1)}px, 0)`;
+        textRef.current.style.opacity = (1 - p * 0.75).toFixed(3);
+      }
+      if (visualRef.current) {
+        visualRef.current.style.transform = `translate3d(0, ${(p * 40).toFixed(1)}px, 0) scale(${(1 - p * 0.08).toFixed(3)})`;
+      }
+      if (cueRef.current) cueRef.current.style.opacity = Math.max(0, 1 - p * 4).toFixed(3);
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+    };
   }, []);
 
   return (
-    <section
-      ref={heroRef}
-      className="min-h-screen flex items-center bg-white dark:bg-gray-900 px-4 sm:px-6 py-16 md:py-20 transition-colors duration-300 overflow-hidden"
-    >
-      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6">
-        <div className="flex flex-col-reverse lg:flex-row items-center justify-between gap-8 md:gap-12 lg:gap-16 xl:gap-24">
-          {/* Texte principal */}
-          <div ref={textRef} className="text-center lg:text-left flex-1">
-            <p className="text-blue-500 text-sm sm:text-base font-semibold mb-2 tracking-wide uppercase">
-              {t.role}
-            </p>
-            <h1 className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl font-bold mb-4 sm:mb-6 leading-tight text-gray-900 dark:text-white">
+    <section ref={sectionRef} className="relative isolate flex min-h-[calc(100svh-5rem)] items-center overflow-hidden bg-white px-4 py-12 transition-colors duration-300 dark:bg-gray-900 sm:px-6 md:py-16">
+      {/* Background: interactive particle network */}
+      <ParticleNetwork className="absolute inset-0 -z-10 h-full w-full" />
+
+      <div className="mx-auto w-full max-w-7xl px-0 sm:px-6">
+        <div className="flex flex-col-reverse items-center gap-4 sm:gap-6 lg:flex-row lg:gap-12">
+          {/* Text */}
+          <div ref={textRef} className="flex-1 text-center will-change-transform lg:text-left">
+            <h1
+              className="hero-reveal mb-5 text-4xl font-extrabold leading-[1.1] tracking-tight text-balance text-gray-900 dark:text-white sm:text-5xl md:text-6xl"
+              style={{ "--d": "0ms" } as React.CSSProperties}
+            >
               {t.greeting}{" "}
-              <span className="bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-blue-500 via-cyan-400 to-purple-500 bg-clip-text text-transparent">
                 {t.name}
               </span>
             </h1>
 
-            <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg md:text-xl mb-6 sm:mb-8 max-w-2xl mx-auto lg:mx-0 min-h-[100px]">
-              {typedText}
-              <span className="animate-pulse text-blue-500">|</span>
+            <p
+              className="hero-reveal mb-5 text-lg text-gray-700 dark:text-gray-200 sm:text-xl"
+              style={{ "--d": "50ms" } as React.CSSProperties}
+            >
+              <span className="block text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">
+                {t.role}
+              </span>
+              <span className="mt-1 block font-medium">
+                {t.typedPrefix} <TypedRoles roles={t.typedRoles} />
+              </span>
             </p>
 
-            <div className="flex flex-col xs:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
+            <p
+              className="hero-reveal mx-auto mb-8 max-w-xl text-base leading-relaxed text-gray-600 dark:text-gray-300 sm:text-lg lg:mx-0"
+              style={{ "--d": "100ms" } as React.CSSProperties}
+            >
+              {t.description}
+            </p>
+
+            <div
+              className="hero-reveal flex flex-col justify-center gap-3 sm:flex-row lg:justify-start"
+              style={{ "--d": "150ms" } as React.CSSProperties}
+            >
               <Link
                 href="/projets"
-                className="hero-btn px-5 py-2.5 sm:px-6 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium sm:font-semibold rounded-full text-sm sm:text-base transition-colors"
+                className="group inline-flex items-center justify-center gap-2 rounded-full bg-blue-600 px-6 py-3 font-semibold text-white shadow-lg shadow-blue-600/25 transition-[background-color,box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow-blue-600/40 active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-500"
               >
                 {t.viewProjects}
+                <FiArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
               <a
-                href="/mon-portfolio.pdf"
+                href="/CV_Isaac_NDri_Koffi_Developpeur.pdf"
                 download
-                className="hero-btn px-5 py-2.5 sm:px-6 sm:py-3 border border-gray-300 dark:border-white text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 font-medium sm:font-semibold rounded-full text-sm sm:text-base transition-colors"
+                className="group inline-flex items-center justify-center gap-2 rounded-full border border-gray-300 px-6 py-3 font-semibold text-gray-900 transition-[background-color,border-color,transform] duration-300 hover:-translate-y-0.5 hover:border-gray-400 hover:bg-gray-100 dark:border-white/30 dark:text-white dark:hover:border-white/60 dark:hover:bg-white/10 active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-500"
               >
+                <FiDownload className="transition-transform duration-300 group-hover:translate-y-0.5" />
                 {t.downloadCV}
               </a>
             </div>
 
-            {/* Stack technique */}
-            <div className="mt-8 sm:mt-10 md:mt-12 flex flex-wrap justify-center lg:justify-start gap-2 sm:gap-3">
-              {["nextjs", "react", "tail", "nodejs", "symfony"].map((tech) => (
-                <div
-                  key={tech}
-                  className="bg-gray-100 dark:bg-white/10 p-1.5 sm:p-2 rounded-md sm:rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-blue-500/20"
-                >
-                  <Image
-                    src={`/images/stack/${tech}.svg`}
-                    alt={tech}
-                    width={20}
-                    height={20}
-                    className="w-5 h-5 sm:w-6 sm:h-6"
-                  />
-                </div>
+            <ul
+              className="hero-reveal mt-8 flex justify-center gap-3 lg:justify-start"
+              style={{ "--d": "200ms" } as React.CSSProperties}
+            >
+              {socials.map(({ label, href, icon: Icon }) => (
+                <li key={label}>
+                  <a
+                    href={href}
+                    target={href.startsWith("http") ? "_blank" : undefined}
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 shadow-sm transition-[color,border-color,transform,box-shadow] duration-300 hover:-translate-y-1 hover:border-blue-400 hover:text-blue-600 hover:shadow-md hover:shadow-blue-500/20 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:border-blue-400/60 dark:hover:text-blue-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-500"
+                  >
+                    <Icon size={18} />
+                  </a>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
 
-          {/* Image de profil avec effet 3D */}
-          <div
-            className="flex-1 flex justify-center mb-8 lg:mb-0 relative"
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-            style={{ perspective: "1000px" }}
-          >
-            {/* Floating tech icons */}
-            {floatingTechs.map((tech, i) => (
+          {/* Robot */}
+          <div className="hero-visual relative flex w-full max-w-[190px] flex-1 justify-center sm:max-w-[300px] lg:max-w-[440px]">
+            <div ref={visualRef} className="relative w-full">
+              {/* glow stays on the robot's home spot when it's dragged away */}
               <div
-                key={tech.name}
-                ref={(el) => {
-                  floatingRefs.current[i] = el;
-                }}
-                className="absolute z-10 bg-white/90 dark:bg-white/10 backdrop-blur-sm p-2 rounded-xl shadow-lg border border-gray-200/50 dark:border-white/10"
-                style={{
-                  top: tech.top,
-                  left: tech.left,
-                  right: tech.right,
-                  bottom: tech.bottom,
-                }}
-              >
-                <Image
-                  src={`/images/stack/${tech.name}.svg`}
-                  alt={tech.name}
-                  width={tech.size}
-                  height={tech.size}
-                />
-              </div>
-            ))}
-
-            <div
-              ref={imageContainerRef}
-              className="relative w-56 h-56 xs:w-64 xs:h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 rounded-xl overflow-hidden shadow-2xl shadow-blue-500/20 will-change-transform"
-              style={{ transformStyle: "preserve-3d" }}
-            >
-              <Image
-                src="/images/stack/image-hero.svg"
-                alt="Isaac Koffi - Développeur Full Stack"
-                fill
-                className="object-cover"
-                sizes="(max-width: 640px) 280px, (max-width: 768px) 320px, (max-width: 1024px) 360px, 400px"
-                priority
+                aria-hidden="true"
+                className="pointer-events-none absolute -inset-[6%] -z-10 bg-[radial-gradient(closest-side,rgba(59,130,246,0.3),rgba(34,211,238,0.12)_55%,transparent)]"
               />
-              {/* Glow overlay */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/10 to-purple-500/10 pointer-events-none" />
+              <Robot label={t.robotLabel} />
             </div>
           </div>
         </div>
       </div>
+
+      {/* Scroll indicator */}
+      <a
+        ref={cueRef}
+        href="#competences"
+        aria-label={t.scrollHint}
+        className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 rounded-full md:block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-500"
+      >
+        <span className="flex h-10 w-6 justify-center rounded-full border-2 border-gray-400/60 pt-2 dark:border-white/30">
+          <span className="scroll-dot h-2 w-1 rounded-full bg-blue-500" />
+        </span>
+      </a>
     </section>
   );
 }

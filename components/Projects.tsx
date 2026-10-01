@@ -2,26 +2,23 @@
 
 import { useEffect, useRef } from "react";
 import Image from "next/image";
+import { FiExternalLink } from "react-icons/fi";
 import { useLanguage } from "@/context/LanguageContext";
 import { translations } from "@/lib/translations";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
+import { observeScrollProgress } from "@/components/ScrollMotion";
 
 /* Tech name → SVG file mapping */
+// Only real logos: techs without one render as a text badge
 const techIconMap: Record<string, string> = {
   MongoDB: "mongodb",
   "React (Vite)": "react",
   "Node.js": "nodejs",
-  Cloudinary: "",
-  Vercel: "nextjs",
-  Render: "nodejs",
+  Express: "express",
   PHP: "php",
   MySQL: "mysql",
   "HTML/CSS": "html",
   Bootstrap: "bootstrap",
-  WampServer: "php",
+  "Bootstrap 5": "bootstrap",
   Git: "git",
   Symfony: "symfony",
   "Tailwind CSS": "tail",
@@ -29,10 +26,6 @@ const techIconMap: Record<string, string> = {
   "Next.js": "nextjs",
   TypeScript: "ts",
   Prisma: "prisma",
-  "Doctrine ORM": "symfony",
-  Twig: "symfony",
-  DomPDF: "php",
-  o2switch: "git",
 };
 
 /* Inline SVG icons for project categories */
@@ -108,6 +101,42 @@ function CheckSquareSVG() {
   );
 }
 
+function UsersSVG() {
+  return (
+    <svg
+      className="w-12 h-12 text-blue-500"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  );
+}
+
+function GraduationCapSVG() {
+  return (
+    <svg
+      className="w-12 h-12 text-blue-500"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+      <path d="M6 12v5c0 2 4 3 6 3s6-1 6-3v-5" />
+    </svg>
+  );
+}
+
 function BuildingSVG() {
   return (
     <svg
@@ -134,239 +163,382 @@ function BuildingSVG() {
   );
 }
 
-const projectIcons = [
-  ShoppingCartSVG,
-  FileTextSVG,
-  BookOpenSVG,
-  CheckSquareSVG,
-  BuildingSVG,
+const projectIcons = {
+  daip: GraduationCapSVG,
+  daikin: UsersSVG,
+  multiNettoyage: BuildingSVG,
+  ecommerce: ShoppingCartSVG,
+  etatCivil: FileTextSVG,
+  blog: BookOpenSVG,
+  taskManager: CheckSquareSVG,
+};
+
+type ProjectKey = keyof typeof projectIcons;
+
+type Project = {
+  titleKey: ProjectKey;
+  techs: string[];
+  /** live site, when it is publicly reachable */
+  link: string | null;
+  github: string | null;
+  /** screenshot of the live site */
+  image?: string;
+  /** natural height of the (tall) screenshot at 1000px wide */
+  imageHeight?: number;
+};
+
+const projects: Project[] = [
+  {
+    titleKey: "daip",
+    techs: ["PHP", "Symfony", "Doctrine ORM", "Twig", "Bootstrap 5", "Git"],
+    link: "https://1jeune1metier.daip.ci",
+    github: null,
+    image: "/images/projects/1jeune1metier-tall.webp",
+    imageHeight: 1500,
+  },
+  {
+    titleKey: "daikin",
+    techs: ["PHP", "Symfony", "Twig", "Bootstrap 5", "Git"],
+    link: "https://daip.ci/daikin/recrutement",
+    github: null,
+    image: "/images/projects/daikin-tall.webp",
+    imageHeight: 1500,
+  },
+  {
+    titleKey: "multiNettoyage",
+    techs: ["PHP", "Symfony", "Doctrine ORM", "MySQL", "Twig", "DomPDF", "SMTP", "Git"],
+    link: "https://multi-nettoyage94.fr/",
+    github: null,
+    image: "/images/projects/multi-nettoyage-tall.webp",
+    imageHeight: 1500,
+  },
+  {
+    titleKey: "ecommerce",
+    techs: ["React (Vite)", "Node.js", "Express", "MongoDB", "JWT", "Cloudinary", "Vercel", "Render"],
+    link: "https://ecommerce-finaly.vercel.app/",
+    github: "https://github.com/12KOFFI/PROJET-ECOMMERCE",
+    image: "/images/projects/ecommerce-tall.webp",
+    imageHeight: 701,
+  },
+  {
+    titleKey: "etatCivil",
+    techs: ["PHP", "MySQL", "HTML/CSS", "Bootstrap", "Git"],
+    link: null,
+    github: "https://github.com/12KOFFI/etatcivil",
+  },
+  {
+    titleKey: "blog",
+    techs: ["PHP", "Symfony", "Twig", "Tailwind CSS", "MySQL", "Git"],
+    link: null,
+    github: "https://github.com/12KOFFI/MyBlog",
+  },
+  {
+    titleKey: "taskManager",
+    techs: ["Next.js", "Tailwind", "TypeScript", "MySQL", "Prisma"],
+    link: null,
+    github: "https://github.com/12KOFFI/TODO-APP-FULL-STACK",
+  },
 ];
+
+const featured = projects.filter((p) => p.image);
+const others = projects.filter((p) => !p.image);
+
+const FOCUS_RING =
+  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500";
+
+function GithubIcon({ className = "h-5 w-5" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+      <path d="M9 18c-4.51 2-5-2-7-2" />
+    </svg>
+  );
+}
+
+function TechBadges({ techs, max }: { techs: string[]; max?: number }) {
+  const shown = max ? techs.slice(0, max) : techs;
+  const hidden = techs.length - shown.length;
+  return (
+    <ul className="flex flex-wrap gap-1.5">
+      {shown.map((tech) => {
+        const iconFile = techIconMap[tech];
+        return (
+          <li
+            key={tech}
+            className="flex items-center gap-1.5 rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700 dark:bg-white/[0.06] dark:text-gray-200"
+          >
+            {iconFile && (
+              <Image
+                src={`/images/stack/${iconFile}.svg`}
+                alt=""
+                width={14}
+                height={14}
+                className={`h-3.5 w-3.5 flex-shrink-0 ${iconFile === "express" ? "dark:invert" : ""}`}
+              />
+            )}
+            {tech}
+          </li>
+        );
+      })}
+      {hidden > 0 && (
+        <li
+          title={techs.slice(shown.length).join(", ")}
+          className="rounded-md px-1.5 py-1 text-xs font-medium tabular-nums text-gray-500 dark:text-gray-400"
+        >
+          <span aria-hidden="true">+{hidden}</span>
+          <span className="sr-only">{techs.slice(shown.length).join(", ")}</span>
+        </li>
+      )}
+    </ul>
+  );
+}
+
+const hostOf = (url: string) => new URL(url).host.replace(/^www\./, "");
+
+type ProjectsCopy = (typeof translations)[keyof typeof translations]["projects"];
+
+/** Screenshot inside a slim browser frame: shows it's a live site and where it lives */
+function BrowserShot({
+  project,
+  title,
+  priority,
+  sizes,
+}: {
+  project: Project;
+  title: string;
+  priority: boolean;
+  sizes: string;
+}) {
+  const frameRef = useRef<HTMLDivElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  // The site scrolls inside its frame as the page scrolls: a live preview
+  // that shows more of the project than a static crop.
+  useEffect(() => {
+    const frame = frameRef.current;
+    if (!frame || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    return observeScrollProgress(frame, () => {
+      const img = imgRef.current;
+      if (!img) return;
+      const travel = img.offsetHeight - frame.clientHeight;
+      if (travel <= 0) return;
+      // From the moment the frame enters (or from the top of the page if it's
+      // already visible) until it leaves: always starts on the site's header.
+      const r = frame.getBoundingClientRect();
+      const absTop = r.top + window.scrollY;
+      const start = Math.max(0, absTop - window.innerHeight);
+      const end = absTop + r.height;
+      const q = Math.min(1, Math.max(0, (window.scrollY - start) / (end - start)));
+      const eased = q * q * (3 - 2 * q); // smoothstep: settles at both ends
+      img.style.transform = `translate3d(0, ${(-travel * eased).toFixed(1)}px, 0)`;
+    });
+  }, []);
+
+  return (
+    <a
+      href={project.link!}
+      target="_blank"
+      rel="noopener noreferrer"
+      tabIndex={-1}
+      aria-hidden="true"
+      title={title}
+      className="flex h-full flex-col"
+    >
+      <div className="flex items-center gap-2.5 border-b border-gray-200 bg-gray-50 px-3 py-2 dark:border-white/10 dark:bg-neutral-800/60">
+        <span className="flex gap-1">
+          <span className="h-2 w-2 rounded-full bg-[#ff5f57]" />
+          <span className="h-2 w-2 rounded-full bg-[#febc2e]" />
+          <span className="h-2 w-2 rounded-full bg-[#28c840]" />
+        </span>
+        <span className="flex-1 truncate rounded bg-white px-2 py-0.5 text-center text-[11px] text-gray-500 ring-1 ring-gray-200 dark:bg-neutral-900 dark:text-gray-400 dark:ring-white/10">
+          {hostOf(project.link!)}
+        </span>
+      </div>
+      <div
+        ref={frameRef}
+        className="relative aspect-[16/10] flex-1 overflow-hidden bg-gray-100 dark:bg-neutral-800"
+      >
+        <Image
+          ref={imgRef}
+          src={project.image!}
+          alt=""
+          width={1000}
+          height={project.imageHeight ?? 625}
+          priority={priority}
+          sizes={sizes}
+          className="absolute inset-x-0 top-0 h-auto w-full will-change-transform"
+        />
+      </div>
+    </a>
+  );
+}
+
+function ProjectActions({
+  project,
+  title,
+  t,
+  pinBottom = true,
+}: {
+  project: Project;
+  title: string;
+  t: ProjectsCopy;
+  pinBottom?: boolean;
+}) {
+  return (
+    <div className={`flex items-center gap-2.5 pt-1 ${pinBottom ? "mt-auto" : ""}`}>
+      <a
+        href={project.link!}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`${t.viewProject} : ${title}`}
+        className={`inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-blue-700 pointer-coarse:min-h-11 ${FOCUS_RING}`}
+      >
+        {t.viewProject}
+        <FiExternalLink aria-hidden="true" className="h-3.5 w-3.5" />
+      </a>
+      {project.github && (
+        <a
+          href={project.github}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`${t.sourceCode} : ${title}`}
+          className={`inline-flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-gray-700 transition-colors duration-200 hover:border-gray-400 hover:text-gray-900 dark:border-white/15 dark:text-gray-200 dark:hover:border-white/40 dark:hover:text-white pointer-coarse:h-11 pointer-coarse:w-11 ${FOCUS_RING}`}
+        >
+          <GithubIcon className="h-4 w-4" />
+        </a>
+      )}
+    </div>
+  );
+}
+
+const CARD =
+  "group overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-[border-color,box-shadow] duration-300 hover:border-blue-300 hover:shadow-xl hover:shadow-blue-500/10 dark:border-white/10 dark:bg-neutral-900 dark:hover:border-blue-500/40";
 
 export default function Projects() {
   const { lang } = useLanguage();
   const t = translations[lang].projects;
-  const sectionRef = useRef<HTMLElement>(null);
-
-  const projects = [
-    {
-      titleKey: "ecommerce" as const,
-      techs: [
-        "MongoDB",
-        "React (Vite)",
-        "Node.js",
-        "Cloudinary",
-        "Vercel",
-        "Render",
-      ],
-      link: "https://ecommerce-finaly.vercel.app/",
-      github: "https://github.com/12KOFFI/Ecommerce-finaly",
-    },
-    {
-      titleKey: "multiNettoyage" as const,
-      techs: [
-        "PHP",
-        "Symfony",
-        "Doctrine ORM",
-        "MySQL",
-        "Twig",
-        "DomPDF",
-        "SMTP",
-        "Git",
-      ],
-      link: "https://multi-nettoyage94.fr/",
-      github: null,
-    },
-    {
-      titleKey: "etatCivil" as const,
-      techs: ["PHP", "MySQL", "HTML/CSS", "Bootstrap", "Git"],
-      link: "https://github.com/12KOFFI/etatcivil",
-      github: "https://github.com/12KOFFI/etatcivil",
-    },
-    {
-      titleKey: "blog" as const,
-      techs: ["PHP", "Symfony", "Tailwind CSS", "MySQL", "Git"],
-      link: "#",
-      github: "#",
-    },
-    {
-      titleKey: "taskManager" as const,
-      techs: ["Next.js", "Tailwind", "TypeScript", "MySQL", "Prisma"],
-      link: "https://github.com/12KOFFI/TODO-APP-FULL-STACK",
-      github: "https://github.com/12KOFFI/TODO-APP-FULL-STACK",
-    },
-  ];
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Title
-      gsap.fromTo(
-        ".projects-title",
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 80%",
-            toggleActions: "play none none none",
-          },
-        },
-      );
-
-      // Cards stagger
-      gsap.fromTo(
-        ".project-card",
-        { opacity: 0, y: 50, scale: 0.95 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.7,
-          stagger: 0.12,
-          ease: "power3.out",
-          clearProps: "all",
-          scrollTrigger: {
-            trigger: ".projects-grid",
-            start: "top 85%",
-            toggleActions: "play none none none",
-          },
-        },
-      );
-
-      // Tech icons inside cards
-      gsap.fromTo(
-        ".tech-icon-badge",
-        { opacity: 0, scale: 0, y: 10 },
-        {
-          opacity: 1,
-          scale: 1,
-          y: 0,
-          duration: 0.4,
-          stagger: 0.03,
-          ease: "back.out(1.7)",
-          clearProps: "all",
-          scrollTrigger: {
-            trigger: ".projects-grid",
-            start: "top 80%",
-            toggleActions: "play none none none",
-          },
-        },
-      );
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, [lang]);
 
   return (
-    <section
-      ref={sectionRef}
-      id="projects"
-      className="bg-gray-50 dark:bg-neutral-950 text-gray-900 dark:text-white py-28 px-6 relative overflow-hidden transition-colors duration-300"
-    >
-      {/* Background effects */}
-      <div className="absolute inset-0 overflow-hidden opacity-10 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500 rounded-full blur-3xl mix-blend-overlay" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500 rounded-full blur-3xl mix-blend-overlay" />
-      </div>
-
-      <div className="max-w-7xl mx-auto relative z-10">
-        <h2 className="projects-title text-4xl md:text-6xl font-bold text-center mb-20 bg-gradient-to-r from-gray-900 to-gray-500 dark:from-white dark:to-gray-400 bg-clip-text text-transparent">
-          {t.title} <span className="text-blue-500">{t.titleHighlight}</span>
+    <section className="relative overflow-hidden bg-white px-4 py-20 text-gray-900 transition-colors duration-300 dark:bg-neutral-950 dark:text-white sm:px-6">
+      <div className="relative z-10 mx-auto max-w-6xl">
+        <h2 className="hero-reveal mb-14 text-center text-4xl font-bold tracking-tight text-balance md:mb-20 md:text-6xl">
+          {t.title} <span className="text-blue-600 dark:text-blue-400">{t.titleHighlight}</span>
         </h2>
 
-        <div className="projects-grid grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-6xl mx-auto">
-          {projects.map((project, index) => {
-            const IconComponent = projectIcons[index] || CheckSquareSVG;
-            const projectT = t[project.titleKey];
-            return (
-              <div
-                key={index}
-                className="project-card group relative bg-white dark:bg-neutral-900 rounded-xl overflow-hidden border border-gray-200 dark:border-white/10 hover:border-blue-300 dark:hover:border-blue-500/30 transition-all duration-300 shadow-lg hover:shadow-blue-500/10 dark:hover:shadow-blue-500/20 hover:-translate-y-1 p-6 flex flex-col justify-between"
-              >
-                {/* Icon */}
-                <div className="flex justify-center mb-4">
-                  <div className="p-3 bg-blue-50 dark:bg-blue-500/10 rounded-2xl group-hover:scale-110 transition-transform duration-300">
-                    <IconComponent />
+        {/* Featured: live sites with a real screenshot.
+            The national platform leads (full-width, horizontal); the others sit compact on one row. */}
+        <ul className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {featured.map((project, index) => {
+            const copy = t[project.titleKey];
+            const lead = index === 0;
+
+            if (lead) {
+              return (
+                <li
+                  key={project.titleKey}
+                  className={`${CARD} hero-reveal grid md:col-span-2 md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:col-span-3 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]`}
+                  style={{ "--d": "0ms" } as React.CSSProperties}
+                >
+                  <div className="border-b border-gray-200 dark:border-white/10 md:border-b-0 md:border-r">
+                    <BrowserShot
+                      project={project}
+                      title={copy.title}
+                      priority
+                      sizes="(min-width: 1152px) 600px, (min-width: 768px) 55vw, 100vw"
+                    />
                   </div>
-                </div>
+                  <div className="flex flex-col justify-center gap-4 p-6 lg:p-10">
+                    <h3 className="text-2xl font-bold tracking-tight text-balance">{copy.title}</h3>
+                    <p className="text-[15px] leading-relaxed text-gray-600 dark:text-gray-400">
+                      {copy.description}
+                    </p>
+                    <TechBadges techs={project.techs} />
+                    <ProjectActions project={project} title={copy.title} t={t} pinBottom={false} />
+                  </div>
+                </li>
+              );
+            }
 
-                {/* Content */}
-                <div className="text-center flex-1">
-                  <h3 className="text-xl font-bold mb-2 group-hover:text-blue-500 transition-colors">
-                    {projectT.title}
-                  </h3>
-                  <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-                    {projectT.description}
+            return (
+              <li
+                key={project.titleKey}
+                // tablet (2 cols): center the odd card out instead of leaving a hole
+                data-reveal="up"
+                className={`${CARD} flex flex-col md:last:col-span-2 md:last:mx-auto md:last:w-[calc(50%-0.75rem)] lg:last:col-span-1 lg:last:mx-0 lg:last:w-auto`}
+                style={{ animationDelay: `${(index - 1) * 50}ms` }}
+              >
+                <div className="border-b border-gray-200 dark:border-white/10">
+                  <BrowserShot
+                    project={project}
+                    title={copy.title}
+                    priority={false}
+                    sizes="(min-width: 1152px) 368px, (min-width: 768px) 50vw, 100vw"
+                  />
+                </div>
+                <div className="flex flex-1 flex-col gap-3 p-5">
+                  <h3 className="text-lg font-bold leading-snug text-balance">{copy.title}</h3>
+                  {/* visually clamped; assistive tech still reads the full text */}
+                  <p className="line-clamp-3 text-sm leading-relaxed text-gray-600 dark:text-gray-400">
+                    {copy.description}
                   </p>
+                  <TechBadges techs={project.techs} max={3} />
+                  <ProjectActions project={project} title={copy.title} t={t} />
                 </div>
-
-                {/* Tech badges with SVG icons */}
-                <div className="flex gap-2 mt-4 mb-4 flex-wrap justify-center">
-                  {project.techs.map((tech, i) => {
-                    const iconFile = techIconMap[tech];
-                    return (
-                      <div
-                        key={i}
-                        className="tech-icon-badge flex items-center gap-1.5 px-2.5 py-1.5 bg-gray-100 dark:bg-neutral-800 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-500/10 hover:scale-105 transition-all duration-200 cursor-default"
-                      >
-                        {iconFile && (
-                          <Image
-                            src={`/images/stack/${iconFile}.svg`}
-                            alt={tech}
-                            width={16}
-                            height={16}
-                            className="w-4 h-4 flex-shrink-0"
-                          />
-                        )}
-                        <span className="text-xs text-gray-700 dark:text-white font-medium">
-                          {tech}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Buttons */}
-                <div className="flex gap-3 justify-center mt-auto">
-                  <a
-                    href={project.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 max-w-[200px] text-center bg-blue-600 hover:bg-blue-500 transition px-4 py-2 rounded-lg text-white text-sm font-medium"
-                  >
-                    {t.viewProject}
-                  </a>
-                  {project.github && (
-                    <a
-                      href={project.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center w-10 bg-gray-100 dark:bg-neutral-800 hover:bg-gray-200 dark:hover:bg-neutral-700 transition px-2 py-2 rounded-lg text-gray-700 dark:text-white"
-                      aria-label="Code source GitHub"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
-                        <path d="M9 18c-4.51 2-5-2-7-2" />
-                      </svg>
-                    </a>
-                  )}
-                </div>
-              </div>
+              </li>
             );
           })}
-        </div>
+        </ul>
+
+        {/* Other projects: no public preview, so a compact list instead of empty cards */}
+        <h3 data-reveal="heading" className="mb-5 mt-16 text-2xl font-bold">
+          {t.otherProjects}
+        </h3>
+        <ul data-reveal="stagger" className="divide-y divide-gray-200 overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 dark:divide-white/10 dark:border-white/10 dark:bg-neutral-900">
+          {others.map((project) => {
+            const copy = t[project.titleKey];
+            const Icon = projectIcons[project.titleKey];
+            return (
+              <li
+                key={project.titleKey}
+                className="grid gap-4 p-5 sm:grid-cols-[auto_1fr_auto] sm:items-start sm:gap-6 sm:p-6"
+              >
+                <div className="hidden h-12 w-12 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-500/10 sm:flex [&_svg]:h-6 [&_svg]:w-6">
+                  <Icon />
+                </div>
+                <div className="space-y-3">
+                  <div>
+                    <h4 className="font-bold">{copy.title}</h4>
+                    <p className="mt-1 text-sm leading-relaxed text-gray-600 dark:text-gray-400">
+                      {copy.description}
+                    </p>
+                  </div>
+                  <TechBadges techs={project.techs} />
+                </div>
+                {project.github && (
+                  <a
+                    href={project.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${t.sourceCode} : ${copy.title}`}
+                    className={`inline-flex items-center gap-2 self-start rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-800 transition-colors duration-200 hover:border-gray-500 dark:border-white/15 dark:bg-transparent dark:text-gray-100 dark:hover:border-white/40 ${FOCUS_RING}`}
+                  >
+                    <GithubIcon className="h-4 w-4" />
+                    {t.sourceCode}
+                  </a>
+                )}
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </section>
   );
