@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import Providers from "@/components/Providers";
 import ChatBotIcon from "@/components/ChatBotIcon";
 import ScrollMotion from "@/components/ScrollMotion";
+import LiveChat from "@/components/LiveChat";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -38,6 +39,7 @@ export default function RootLayout({
           <main className="pt-20">{children}</main>
           <Footer />
           <ChatBotIcon />
+          <LiveChat />
           <ScrollMotion />
         </Providers>
       </body>

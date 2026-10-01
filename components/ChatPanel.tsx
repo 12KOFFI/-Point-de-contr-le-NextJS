@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { FiArrowUpRight, FiDownload, FiRotateCcw, FiSend, FiX } from "react-icons/fi";
+import { FiArrowUpRight, FiDownload, FiMessageSquare, FiRotateCcw, FiSend, FiX } from "react-icons/fi";
+import { openLiveChat, useLiveChat } from "@/lib/livechat";
 import { useLanguage } from "@/context/LanguageContext";
 import {
   answer,
@@ -25,8 +26,20 @@ interface ChatPanelProps {
 
 let nextId = 1;
 
-function ActionLink({ action }: { action: Action }) {
+function ActionLink({ action, onLive }: { action: Action; onLive: () => void }) {
   const internal = action.href.startsWith("/") && !action.download;
+  if (action.live) {
+    return (
+      <button
+        type="button"
+        onClick={onLive}
+        className="inline-flex items-center gap-1.5 rounded-full bg-emerald-600 px-3.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-emerald-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
+      >
+        <FiMessageSquare aria-hidden="true" className="h-3.5 w-3.5" />
+        {action.label}
+      </button>
+    );
+  }
   return (
     <a
       href={action.href}
@@ -56,6 +69,13 @@ export default function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const live = useLiveChat();
+
+  // hand over to the human: close the assistant, open the Tawk window
+  const goLive = () => {
+    openLiveChat();
+    onClose();
+  };
 
   // keep the latest exchange in view
   useEffect(() => {
@@ -159,6 +179,42 @@ export default function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
           </div>
         </div>
 
+        {/* Live chat with Isaac (Tawk.to) */}
+        <div className="flex items-center justify-between gap-3 border-b border-slate-200 bg-slate-50 px-4 py-2.5 dark:border-white/10 dark:bg-white/[0.03]">
+          <p className="flex min-w-0 items-center gap-2 text-xs font-medium text-slate-700 dark:text-slate-200">
+            <span
+              aria-hidden="true"
+              className={`relative flex h-2.5 w-2.5 shrink-0 rounded-full ${
+                live.status === "online"
+                  ? "bg-emerald-500"
+                  : live.status === "away"
+                    ? "bg-amber-500"
+                    : "bg-slate-400"
+              }`}
+            >
+              {live.status === "online" && (
+                <span className="absolute inset-0 animate-ping rounded-full bg-emerald-500/60 motion-reduce:hidden" />
+              )}
+            </span>
+            <span className="truncate">
+              {live.unread > 0 ? ui.live.unread(live.unread) : ui.live[live.status]}
+            </span>
+          </p>
+          <button
+            type="button"
+            onClick={goLive}
+            className="shrink-0 rounded-full border border-emerald-600/40 bg-white px-3 py-1.5 text-xs font-semibold text-emerald-700 transition-colors hover:border-emerald-600 hover:bg-emerald-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 dark:border-emerald-400/40 dark:bg-transparent dark:text-emerald-300 dark:hover:bg-emerald-400/10 pointer-coarse:py-2"
+          >
+            {live.unread > 0
+              ? ui.live.resume
+              : live.status === "online" || live.status === "away"
+                ? ui.live.ctaOnline
+                : live.status === "loading"
+                  ? ui.live.ctaOnline
+                  : ui.live.ctaOffline}
+          </button>
+        </div>
+
         {/* Messages */}
         <div
           ref={listRef}
@@ -180,7 +236,7 @@ export default function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
                 {m.reply.actions?.length ? (
                   <div className="flex max-w-[88%] flex-wrap gap-2">
                     {m.reply.actions.map((a) => (
-                      <ActionLink key={a.label + a.href} action={a} />
+                      <ActionLink key={a.label + a.href} action={a} onLive={goLive} />
                     ))}
                   </div>
                 ) : null}

@@ -18,7 +18,14 @@ export type TopicId =
   | "contact"
   | "cv";
 
-export type Action = { label: string; href: string; external?: boolean; download?: boolean };
+/** `live: true` opens the live chat (Tawk.to) instead of following a link */
+export type Action = { label: string; href: string; external?: boolean; download?: boolean; live?: boolean };
+
+const liveAction = (lang: Language): Action => ({
+  label: lang === "fr" ? "Discuter en direct" : "Chat live",
+  href: "#live-chat",
+  live: true,
+});
 
 export type Reply = {
   text: string;
@@ -40,6 +47,16 @@ export const UI = {
     restart: "Recommencer",
     typing: "Isaac écrit…",
     note: "Assistant automatique — pour une vraie discussion, écrivez-moi.",
+    live: {
+      online: "Isaac est en ligne",
+      away: "Isaac est absent",
+      offline: "Isaac est hors ligne",
+      loading: "Chat en direct",
+      ctaOnline: "Discuter en direct",
+      ctaOffline: "Laisser un message",
+      resume: "Reprendre la conversation",
+      unread: (n: number) => (n > 1 ? `${n} nouveaux messages` : "1 nouveau message"),
+    },
     topics: {
       profile: "Profil",
       skills: "Compétences",
@@ -61,6 +78,16 @@ export const UI = {
     restart: "Start over",
     typing: "Isaac is typing…",
     note: "Automated assistant — for a real conversation, email me.",
+    live: {
+      online: "Isaac is online",
+      away: "Isaac is away",
+      offline: "Isaac is offline",
+      loading: "Live chat",
+      ctaOnline: "Chat live",
+      ctaOffline: "Leave a message",
+      resume: "Resume the conversation",
+      unread: (n: number) => (n > 1 ? `${n} new messages` : "1 new message"),
+    },
     topics: {
       profile: "Profile",
       skills: "Skills",
@@ -179,6 +206,7 @@ const fr = (lang: Language) => lang === "fr";
 
 function contactActions(lang: Language): Action[] {
   return [
+    liveAction(lang),
     { label: fr(lang) ? "Envoyer un email" : "Send an email", href: `mailto:${CONTACT.email}` },
     { label: "LinkedIn", href: CONTACT.linkedin, external: true },
     { label: fr(lang) ? "Télécharger le CV" : "Download resume", href: CONTACT.cv, download: true },
@@ -258,6 +286,7 @@ export function topicReply(topic: TopicId, lang: Language): Reply {
           ? `• Email : ${CONTACT.email}\n• Téléphone : ${CONTACT.phoneLabel}\n• LinkedIn et GitHub : boutons ci-dessous.`
           : `• Email: ${CONTACT.email}\n• Phone: ${CONTACT.phoneLabel}\n• LinkedIn and GitHub: buttons below.`,
         actions: [
+          liveAction(lang),
           { label: F ? "Envoyer un email" : "Send an email", href: `mailto:${CONTACT.email}` },
           { label: F ? "Appeler" : "Call", href: CONTACT.phoneHref },
           { label: "LinkedIn", href: CONTACT.linkedin, external: true },
@@ -383,9 +412,10 @@ export function answer(input: string, lang: Language): Reply & { understood: boo
   const body = encodeURIComponent(input);
   return {
     text: F
-      ? "Je n'ai pas de réponse toute prête à cette question 🤔 Envoyez-la directement à Isaac par email (elle est déjà rédigée), ou choisissez un sujet."
-      : "I don't have a ready answer to that one 🤔 Send it straight to Isaac by email (already written for you), or pick a topic.",
+      ? "Je n'ai pas de réponse toute prête à cette question 🤔 Posez-la à Isaac en direct, envoyez-la par email (elle est déjà rédigée), ou choisissez un sujet."
+      : "I don't have a ready answer to that one 🤔 Ask Isaac live, send it by email (already written for you), or pick a topic.",
     actions: [
+      liveAction(lang),
       { label: F ? "Envoyer ma question" : "Send my question", href: `mailto:${CONTACT.email}?subject=${subject}&body=${body}` },
     ],
     next: TOPIC_ORDER,

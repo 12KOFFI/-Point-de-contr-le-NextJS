@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import { FiMessageCircle, FiX } from "react-icons/fi";
+import { openLiveChat, useLiveChat } from "@/lib/livechat";
 
 // The assistant panel is loaded only when needed,
 // so it stays out of the initial bundle of every page.
@@ -12,8 +13,14 @@ const ChatPanel = dynamic(loadChatPanel, { ssr: false });
 export default function ChatBotIcon() {
   const [isOpen, setIsOpen] = useState(false);
   const [hasOpened, setHasOpened] = useState(false);
+  const { unread } = useLiveChat();
 
   const toggle = () => {
+    // Isaac replied in the live chat: take the visitor straight to the conversation
+    if (unread > 0 && !isOpen) {
+      openLiveChat();
+      return;
+    }
     setHasOpened(true);
     setIsOpen((open) => !open);
   };
@@ -32,7 +39,9 @@ export default function ChatBotIcon() {
           // Prefetch the panel chunk as soon as the user shows intent
           onPointerEnter={loadChatPanel}
           onFocus={loadChatPanel}
-          aria-label={isOpen ? "Close chat" : "Open chat"}
+          aria-label={
+            isOpen ? "Close chat" : unread > 0 ? `Open chat (${unread} new message${unread > 1 ? "s" : ""})` : "Open chat"
+          }
           aria-expanded={isOpen}
           className={`group relative flex h-14 w-14 items-center justify-center rounded-full transition-[background-color,box-shadow,scale] duration-300 hover:scale-[1.08] active:scale-[0.92] ${
             isOpen
@@ -54,6 +63,15 @@ export default function ChatBotIcon() {
               isOpen ? "rotate-0 scale-100 opacity-100" : "-rotate-180 scale-0 opacity-0"
             }`}
           />
+          {/* unread live-chat replies */}
+          {unread > 0 && !isOpen && (
+            <span
+              aria-hidden="true"
+              className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-emerald-500 px-1 text-[11px] font-bold tabular-nums text-white ring-2 ring-white dark:ring-neutral-950"
+            >
+              {unread}
+            </span>
+          )}
         </button>
       </div>
     </>
