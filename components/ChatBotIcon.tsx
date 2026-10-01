@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import { FiMessageCircle, FiX } from "react-icons/fi";
 
-// The chat panel pulls in the AI SDK + framer-motion: load it only when needed,
+// The assistant panel is loaded only when needed,
 // so it stays out of the initial bundle of every page.
 const loadChatPanel = () => import("./ChatPanel");
 const ChatPanel = dynamic(loadChatPanel, { ssr: false });

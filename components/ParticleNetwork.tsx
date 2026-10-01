@@ -30,7 +30,14 @@ const PALETTE = {
  * - rAF loop paused off screen; one static frame with prefers-reduced-motion
  * - starts on idle so it never competes with the first paint of the Hero
  */
-export default function ParticleNetwork({ className = "" }: { className?: string }) {
+export default function ParticleNetwork({
+  className = "",
+  quietSelector,
+}: {
+  className?: string;
+  /** Elements (in the same parent) over which the network fades out, so text stays legible */
+  quietSelector?: string;
+}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -84,7 +91,26 @@ export default function ParticleNetwork({ className = "" }: { className?: string
       });
     };
 
+    // Quiet zones: soft elliptical holes erased under the text block
+    let zones: { cx: number; cy: number; rx: number; ry: number }[] = [];
+    const zoneEls = quietSelector
+      ? Array.from(canvas.parentElement?.querySelectorAll<HTMLElement>(quietSelector) ?? [])
+      : [];
+    const measureZones = () => {
+      const c = canvas.getBoundingClientRect();
+      zones = zoneEls.map((el) => {
+        const r = el.getBoundingClientRect();
+        return {
+          cx: r.left - c.left + r.width / 2,
+          cy: r.top - c.top + r.height / 2,
+          rx: (r.width / 2) * 1.15 + 24,
+          ry: (r.height / 2) * 1.15 + 24,
+        };
+      });
+    };
+
     const resize = () => {
+      measureZones();
       const rect = canvas.getBoundingClientRect();
       const prevW = width;
       const prevH = height;
@@ -164,6 +190,25 @@ export default function ParticleNetwork({ className = "" }: { className?: string
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
       }
       ctx.fill();
+
+      // Erase most of the network under the text: still there, but never fighting the copy
+      if (zones.length) {
+        ctx.save();
+        ctx.globalCompositeOperation = "destination-out";
+        for (const z of zones) {
+          ctx.setTransform(1, 0, 0, 1, 0, 0);
+          const dpr = canvas.width / width;
+          ctx.translate(z.cx * dpr, z.cy * dpr);
+          ctx.scale(z.rx * dpr, z.ry * dpr);
+          const g = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+          g.addColorStop(0, "rgba(0,0,0,0.9)");
+          g.addColorStop(0.62, "rgba(0,0,0,0.9)");
+          g.addColorStop(1, "rgba(0,0,0,0)");
+          ctx.fillStyle = g;
+          ctx.fillRect(-1, -1, 2, 2);
+        }
+        ctx.restore();
+      }
     };
 
     const update = (step: number) => {
@@ -269,6 +314,9 @@ export default function ParticleNetwork({ className = "" }: { className?: string
     const boot = () => {
       resize();
       ro.observe(canvas);
+      zoneEls.forEach((el) => ro.observe(el));
+      // web fonts can reflow the text block after first measure
+      document.fonts?.ready.then(() => measureZones());
       io.observe(canvas);
       themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
       window.addEventListener("pointermove", onPointerMove, { passive: true });
@@ -301,7 +349,7 @@ export default function ParticleNetwork({ className = "" }: { className?: string
       window.removeEventListener("scroll", onScroll);
       document.documentElement.removeEventListener("pointerleave", onPointerLeave);
     };
-  }, []);
+  }, [quietSelector]);
 
   return (
     <canvas

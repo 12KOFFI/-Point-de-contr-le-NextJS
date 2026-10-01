@@ -6,6 +6,7 @@ import { FiExternalLink } from "react-icons/fi";
 import { useLanguage } from "@/context/LanguageContext";
 import { translations } from "@/lib/translations";
 import { observeScrollProgress } from "@/components/ScrollMotion";
+import { PROJECT_LINKS } from "@/lib/site";
 
 /* Tech name → SVG file mapping */
 // Only real logos: techs without one render as a text badge
@@ -191,52 +192,45 @@ const projects: Project[] = [
   {
     titleKey: "daip",
     techs: ["PHP", "Symfony", "Doctrine ORM", "Twig", "Bootstrap 5", "Git"],
-    link: "https://1jeune1metier.daip.ci",
-    github: null,
+    ...PROJECT_LINKS.daip,
     image: "/images/projects/1jeune1metier-tall.webp",
     imageHeight: 1500,
   },
   {
     titleKey: "daikin",
     techs: ["PHP", "Symfony", "Twig", "Bootstrap 5", "Git"],
-    link: "https://daip.ci/daikin/recrutement",
-    github: null,
+    ...PROJECT_LINKS.daikin,
     image: "/images/projects/daikin-tall.webp",
     imageHeight: 1500,
   },
   {
     titleKey: "multiNettoyage",
     techs: ["PHP", "Symfony", "Doctrine ORM", "MySQL", "Twig", "DomPDF", "SMTP", "Git"],
-    link: "https://multi-nettoyage94.fr/",
-    github: null,
+    ...PROJECT_LINKS.multiNettoyage,
     image: "/images/projects/multi-nettoyage-tall.webp",
     imageHeight: 1500,
   },
   {
     titleKey: "ecommerce",
     techs: ["React (Vite)", "Node.js", "Express", "MongoDB", "JWT", "Cloudinary", "Vercel", "Render"],
-    link: "https://ecommerce-finaly.vercel.app/",
-    github: "https://github.com/12KOFFI/PROJET-ECOMMERCE",
+    ...PROJECT_LINKS.ecommerce,
     image: "/images/projects/ecommerce-tall.webp",
     imageHeight: 701,
   },
   {
     titleKey: "etatCivil",
     techs: ["PHP", "MySQL", "HTML/CSS", "Bootstrap", "Git"],
-    link: null,
-    github: "https://github.com/12KOFFI/etatcivil",
+    ...PROJECT_LINKS.etatCivil,
   },
   {
     titleKey: "blog",
     techs: ["PHP", "Symfony", "Twig", "Tailwind CSS", "MySQL", "Git"],
-    link: null,
-    github: "https://github.com/12KOFFI/MyBlog",
+    ...PROJECT_LINKS.blog,
   },
   {
     titleKey: "taskManager",
     techs: ["Next.js", "Tailwind", "TypeScript", "MySQL", "Prisma"],
-    link: null,
-    github: "https://github.com/12KOFFI/TODO-APP-FULL-STACK",
+    ...PROJECT_LINKS.taskManager,
   },
 ];
 

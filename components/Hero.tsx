@@ -83,15 +83,24 @@ export default function Hero() {
       raf = 0;
       const section = sectionRef.current;
       if (!section) return;
-      const p = Math.min(1, Math.max(0, window.scrollY / (section.offsetHeight * 0.85)));
-      if (p === lastP) return;
-      lastP = p;
+      const h = section.offsetHeight;
+      const p = Math.min(1, Math.max(0, window.scrollY / (h * 0.85)));
+      // Stacked layout (phones/tablets): you scroll *to* reach the buttons, so the
+      // text must never fade or move while it's being read.
+      const stacked = window.innerWidth < 1024;
+      // Side-by-side layout: the text only starts leaving once a third of the hero
+      // has scrolled by, i.e. when it's already near the top of the screen.
+      const pt = stacked ? 0 : Math.min(1, Math.max(0, (window.scrollY - h * 0.3) / (h * 0.6)));
+      const key = p + pt * 10;
+      if (key === lastP) return;
+      lastP = key;
       if (textRef.current) {
-        textRef.current.style.transform = `translate3d(0, ${(-p * 70).toFixed(1)}px, 0)`;
-        textRef.current.style.opacity = (1 - p * 0.75).toFixed(3);
+        // whole pixels only: fractional translations blur text
+        textRef.current.style.transform = pt ? `translate3d(0, ${Math.round(-pt * 60)}px, 0)` : "";
+        textRef.current.style.opacity = pt ? (1 - pt * 0.7).toFixed(3) : "";
       }
       if (visualRef.current) {
-        visualRef.current.style.transform = `translate3d(0, ${(p * 40).toFixed(1)}px, 0) scale(${(1 - p * 0.08).toFixed(3)})`;
+        visualRef.current.style.transform = `translate3d(0, ${Math.round(p * 40)}px, 0) scale(${(1 - p * 0.08).toFixed(3)})`;
       }
       if (cueRef.current) cueRef.current.style.opacity = Math.max(0, 1 - p * 4).toFixed(3);
     };
@@ -100,33 +109,35 @@ export default function Hero() {
     };
     update();
     window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
     };
   }, []);
 
   return (
     <section ref={sectionRef} className="relative isolate flex min-h-[calc(100svh-5rem)] items-center overflow-hidden bg-white px-4 py-12 transition-colors duration-300 dark:bg-gray-900 sm:px-6 md:py-16">
       {/* Background: interactive particle network */}
-      <ParticleNetwork className="absolute inset-0 -z-10 h-full w-full" />
+      <ParticleNetwork className="absolute inset-0 -z-10 h-full w-full" quietSelector="[data-quiet]" />
 
       <div className="mx-auto w-full max-w-7xl px-0 sm:px-6">
         <div className="flex flex-col-reverse items-center gap-4 sm:gap-6 lg:flex-row lg:gap-12">
           {/* Text */}
-          <div ref={textRef} className="flex-1 text-center will-change-transform lg:text-left">
+          <div ref={textRef} data-quiet className="flex-1 text-center lg:text-left">
             <h1
               className="hero-reveal mb-5 text-4xl font-extrabold leading-[1.1] tracking-tight text-balance text-gray-900 dark:text-white sm:text-5xl md:text-6xl"
               style={{ "--d": "0ms" } as React.CSSProperties}
             >
               {t.greeting}{" "}
-              <span className="bg-gradient-to-r from-blue-500 via-cyan-400 to-purple-500 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-blue-600 via-cyan-600 to-purple-600 bg-clip-text text-transparent dark:from-blue-400 dark:via-cyan-300 dark:to-purple-400">
                 {t.name}
               </span>
             </h1>
 
             <p
-              className="hero-reveal mb-5 text-lg text-gray-700 dark:text-gray-200 sm:text-xl"
+              className="hero-reveal mb-5 text-lg text-gray-800 dark:text-gray-100 sm:text-xl"
               style={{ "--d": "50ms" } as React.CSSProperties}
             >
               <span className="block text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">
@@ -138,30 +149,30 @@ export default function Hero() {
             </p>
 
             <p
-              className="hero-reveal mx-auto mb-8 max-w-xl text-base leading-relaxed text-gray-600 dark:text-gray-300 sm:text-lg lg:mx-0"
+              className="hero-reveal mx-auto mb-8 max-w-xl text-base leading-relaxed text-gray-700 dark:text-gray-200 sm:text-lg lg:mx-0"
               style={{ "--d": "100ms" } as React.CSSProperties}
             >
               {t.description}
             </p>
 
             <div
-              className="hero-reveal flex flex-col justify-center gap-3 sm:flex-row lg:justify-start"
+              className="hero-reveal grid grid-cols-2 gap-3 sm:flex sm:justify-center lg:justify-start"
               style={{ "--d": "150ms" } as React.CSSProperties}
             >
               <Link
                 href="/projets"
-                className="group inline-flex items-center justify-center gap-2 rounded-full bg-blue-600 px-6 py-3 font-semibold text-white shadow-lg shadow-blue-600/25 transition-[background-color,box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow-blue-600/40 active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-500"
+                className="group inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-blue-600 px-4 py-3 text-[15px] font-semibold text-white shadow-lg shadow-blue-600/30 ring-1 ring-blue-500/50 sm:px-6 sm:text-base transition-[background-color,box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow-blue-600/40 active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-500"
               >
-                {t.viewProjects}
-                <FiArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
+                <span className="whitespace-nowrap">{t.viewProjects}</span>
+                <FiArrowRight className="hidden shrink-0 transition-transform duration-300 group-hover:translate-x-1 min-[400px]:inline" />
               </Link>
               <a
                 href="/CV_Isaac_NDri_Koffi_Developpeur.pdf"
                 download
-                className="group inline-flex items-center justify-center gap-2 rounded-full border border-gray-300 px-6 py-3 font-semibold text-gray-900 transition-[background-color,border-color,transform] duration-300 hover:-translate-y-0.5 hover:border-gray-400 hover:bg-gray-100 dark:border-white/30 dark:text-white dark:hover:border-white/60 dark:hover:bg-white/10 active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-500"
+                className="group inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-[15px] font-semibold text-gray-900 shadow-sm transition-[background-color,border-color,transform] duration-300 hover:-translate-y-0.5 hover:border-gray-500 hover:bg-gray-50 dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:hover:border-slate-400 dark:hover:bg-slate-700 sm:px-6 sm:text-base active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-500"
               >
-                <FiDownload className="transition-transform duration-300 group-hover:translate-y-0.5" />
-                {t.downloadCV}
+                <FiDownload className="shrink-0 transition-transform duration-300 group-hover:translate-y-0.5" />
+                <span className="whitespace-nowrap">{t.downloadCV}</span>
               </a>
             </div>
 
@@ -176,7 +187,7 @@ export default function Hero() {
                     target={href.startsWith("http") ? "_blank" : undefined}
                     rel="noopener noreferrer"
                     aria-label={label}
-                    className="flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 shadow-sm transition-[color,border-color,transform,box-shadow] duration-300 hover:-translate-y-1 hover:border-blue-400 hover:text-blue-600 hover:shadow-md hover:shadow-blue-500/20 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:border-blue-400/60 dark:hover:text-blue-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-500"
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-gray-300 bg-white text-gray-800 shadow-sm transition-[color,border-color,transform,box-shadow] duration-300 hover:-translate-y-1 hover:border-blue-400 hover:text-blue-600 hover:shadow-md hover:shadow-blue-500/20 dark:border-slate-600 dark:bg-slate-800 dark:text-gray-100 dark:hover:border-blue-400 dark:hover:text-blue-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-500"
                   >
                     <Icon size={18} />
                   </a>
